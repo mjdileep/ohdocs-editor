@@ -18,7 +18,6 @@ function status(value, long = value) {
   saveLabel.textContent = value
   saveLabel.title = long
   saveLabel.setAttribute('aria-label',long)
-  get('device-status').textContent = value === 'Saved' ? 'Saved on this device' : value
 }
 const shortDate = time => new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(time)
 function list() {
@@ -164,7 +163,8 @@ async function downloadCopy() {
   try {
     const content = snapshot(), url = URL.createObjectURL(await exportFile(content))
     const a = document.createElement('a'); a.href = url
-    a.download = (content.title || 'document').replace(/[^\p{L}\p{N} _.-]/gu,'').slice(0,80) + '.ohdocs.json'
+    const name = (content.title || '').replace(/[^\p{L}\p{N} _.-]/gu,'').slice(0,80).trim().replace(/^\.+/, '')
+    a.download = (name || 'document') + '.ohdocs'
     a.click(); setTimeout(() => URL.revokeObjectURL(url),30000)
   } catch { meta.textContent = 'Download failed. Try again.' }
 }

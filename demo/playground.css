@@ -25,7 +25,6 @@ i[data-icon] { display:inline-flex; align-items:center; } i svg { width:18px; he
 #drafts strong { font-size:14px; } #drafts small { color:#606b77; font-size:12px; }
 #drafts.grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; } #drafts.grid button { min-height:76px; }
 .notes footer { padding:11px 13px; border-top:1px solid #dfe3e7; justify-content:space-between; gap:6px; color:#626a73; font-size:11px; }
-.local-copy { display:grid; justify-items:end; }
 .notes #download-copy { gap:5px; padding:2px 4px; color:#087b58; font-size:12px; font-weight:600; }
 #download-copy svg { width:15px; height:15px; }
 .brand { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:650; color:#26232e; }

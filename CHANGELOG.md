@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.5
+
+Save downloaded notes with the .ohdocs extension and simplify the sidebar footer. Earlier JSON exports still open through Import a note.
+
 ## 1.10.4
 
 Download a copy of the open note beside the device save status, or from the toolbar on a phone.
