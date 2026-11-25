@@ -148,7 +148,13 @@ get('delete').onclick = () => transition(async () => {
   if (next) mount(next,await readSnapshot(db,next))
   else mount(crypto.randomUUID(),blank())
 })
-get('open').onclick = () => { get('note-menu').hidePopover(); get('source').click() }
+function chooseNoteFile() {
+  get('import-error').hidden = true
+  get('note-menu').hidePopover()
+  get('source').click()
+}
+get('open').onclick = chooseNoteFile
+get('import-note').onclick = chooseNoteFile
 get('source').onchange = async event => {
   const file = event.target.files[0]; event.target.value = ''
   if (!file) return
@@ -156,7 +162,11 @@ get('source').onchange = async event => {
     const imported = importFile(JSON.parse(await file.text()))
     if (!isNewerFormat(imported.doc)) mounted.editor.schema.nodeFromJSON(imported.doc).check()
     await transition(() => { get('search').value = ''; mount(crypto.randomUUID(),imported) })
-  } catch (error) { meta.textContent = 'Couldn’t open file. ' + error.message }
+  } catch (error) {
+    const feedback = document.body.classList.contains('show-list') ? get('import-error') : meta
+    feedback.textContent = 'Couldn’t open file. ' + error.message
+    feedback.hidden = false
+  }
 }
 async function downloadCopy() {
   get('note-menu').hidePopover()
@@ -194,4 +204,5 @@ try {
   initial = samples.get(initialId)()
 }
 mount(initialId || crypto.randomUUID(),initial || blank())
+get('import-note').disabled = false
 get('new').disabled = !db; get('delete').disabled = !db

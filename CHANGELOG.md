@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.6
+
+Add Upload beside New note and shorten the sidebar download label to Download.
+
 ## 1.10.5
 
 Save downloaded notes with the .ohdocs extension and simplify the sidebar footer. Earlier JSON exports still open through Import a note.
