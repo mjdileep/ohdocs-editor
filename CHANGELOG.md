@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.4
+
+Show YouTube and Vimeo thumbnails and paused frames for direct video files as they come into view in OhDocs.
+
 ## 1.9.3
 
 Open links in notes with a click or tap, or choose Open link from the context menu. Footnote links scroll within the current note.

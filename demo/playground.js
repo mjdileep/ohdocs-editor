@@ -64,7 +64,7 @@ function mount(id, content) {
   current = id; original = content; dirty = false; pending = null
   saved = {rev:content.rev || 0,ids:new Set(content.files.keys())}
   const host = get('document')
-  mounted = createEditor(host,{content:content.doc,files:content.files,onChange:changed})
+  mounted = createEditor(host,{content:content.doc,files:content.files,videoPreviews:true,onChange:changed})
   const bar = host.querySelector('.fn-formatbar'), chrome = document.createElement('header')
   chrome.className = 'note-chrome'
   chrome.append(get('chrome').content.cloneNode(true))

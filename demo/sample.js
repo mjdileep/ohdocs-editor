@@ -56,7 +56,7 @@ const guide = {type:'doc', content:[
   {type:'blockMath',attrs:{latex:'\\bar{x} = \\frac{6 + 8 + 4}{3} = 6'}},
   p('Click an equation to edit its LaTeX.'),
   details('Watch a flower in motion',
-    p('Press Play to load the flower clip from MDN. Insert (+) also accepts YouTube, Vimeo and direct video links. Drag the video to move it. Double-click to use its player controls.'),
+    p('Press Play to watch the flower clip from MDN. Insert (+) also accepts YouTube, Vimeo and direct video links. Drag the video to move it. Double-click to use its player controls.'),
     object({videoSource:'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',label:'Flowers in the breeze',width:400})),
   h(2,'Try a Markdown paste'),
   p('Copy the block below, then paste into the empty paragraph at the end of the note. The heading, checklist and emphasis will become editable. You can also choose Insert Markdown from the + menu.'),

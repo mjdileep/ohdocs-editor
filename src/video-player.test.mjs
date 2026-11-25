@@ -9,7 +9,7 @@ function dom(t) {
     constructor(tag) {
       super();this.tagName=tag.toUpperCase();this.dataset={};this.children=[];this.attributes={}
       const classes=new Set();this.classList={add:name=>classes.add(name),remove:name=>classes.delete(name)}
-      if(tag==='video'){this.play=()=>Promise.resolve();this.pause=()=>{this.paused=true}}
+      if(tag==='video'){this.load=()=>{};this.play=()=>Promise.resolve();this.pause=()=>{this.paused=true}}
     }
     get isConnected(){return this.root||!!this.parent?.isConnected}
     contains(child){return child===this||this.children.some(item=>item.contains(child))}
@@ -17,16 +17,25 @@ function dom(t) {
     remove(){if(this.parent)this.parent.children=this.parent.children.filter(child=>child!==this);this.parent=null}
     replaceChildren(...children){for(const child of [...this.children])child.remove();for(const child of children)this.append(child)}
     setAttribute(name,value){this.attributes[name]=value}
+    hasAttribute(name){return name==='src'?!!this.src:name in this.attributes}
+    removeAttribute(name){if(name==='src')delete this.src;delete this.attributes[name]}
   }
   const window=new EventTarget(),document=Object.assign(new EventTarget(),{activeElement:null,createElement:tag=>new Element(tag)}),container=new Element('div')
   container.root=true
-  for(const [name,value] of Object.entries({window,document,ResizeObserver:class { observe(){} disconnect(){} },location:{origin:'https://editor.example.test'}})){
+  const watched=new Map()
+  class IntersectionObserver {
+    constructor(callback){this.callback=callback}
+    observe(target){this.target=target;watched.set(target,this.callback)}
+    disconnect(){watched.delete(this.target)}
+    takeRecords(){return []}
+  }
+  for(const [name,value] of Object.entries({window,document,IntersectionObserver,ResizeObserver:class { observe(){} disconnect(){} },location:{origin:'https://editor.example.test'}})){
     const old=Object.getOwnPropertyDescriptor(globalThis,name)
     Object.defineProperty(globalThis,name,{configurable:true,value})
     t.after(()=>old?Object.defineProperty(globalThis,name,old):delete globalThis[name])
   }
   t.mock.timers.enable({apis:['setTimeout']})
-  return {window,document,container}
+  return {window,document,container,show:surface=>watched.get(surface)?.([{isIntersecting:true}])}
 }
 const youtube='https://youtu.be/M7lc1UVf-VE'
 
@@ -98,4 +107,52 @@ test('editing shields a playing video for movement without recreating or stoppin
   assert.equal(surface.children[0],frame)
   player.destroy();document.dispatchEvent(new Event('pointerdown'));document.dispatchEvent(key)
   assert.equal(container.children.length,0)
+})
+
+test('visible videos get a poster or paused file frame while hidden and disabled previews stay idle',t=>{
+  const {container,show}=dom(t)
+  for(const url of [youtube,'https://media.example.test/clip.mp4']){
+    const player=mountVideo(container,url),surface=container.children[0]
+    const [poster,play]=surface.children
+    assert.equal(poster.src,undefined)
+    show(surface)
+    if(url===youtube){
+      assert.equal(poster.tagName,'IMG')
+      assert.equal(poster.src,'https://i.ytimg.com/vi/M7lc1UVf-VE/hqdefault.jpg')
+    }else{
+      assert.equal(poster.tagName,'VIDEO');assert.equal(poster.src,url)
+      assert.equal(poster.muted,true);assert.equal(poster.preload,'metadata');assert.ok(!poster.autoplay)
+      poster.duration=2;poster.dispatchEvent(new Event('loadedmetadata'));assert.equal(poster.currentTime,0.1)
+    }
+    play.dispatchEvent(new Event('click'))
+    assert.equal(poster.isConnected,false)
+    player.destroy()
+    const privatePlayer=mountVideo(container,url,{preview:false})
+    show(container.children[0]);assert.deepEqual(container.children[0].children.map(el=>el.tagName),['BUTTON'])
+    privatePlayer.destroy()
+  }
+})
+
+test('Vimeo uses its own thumbnail, keeps the unlisted hash, and cancels an obsolete lookup',async t=>{
+  const {container,show}=dom(t)
+  let reply
+  const fetchPreview=t.mock.method(globalThis,'fetch',()=>new Promise(resolve=>{reply=resolve}))
+  const player=mountVideo(container,'https://vimeo.com/76979871/abc123')
+  const surface=container.children[0],poster=surface.children[0]
+  assert.equal(fetchPreview.mock.callCount(),0)
+  show(surface)
+  const [url,options]=fetchPreview.mock.calls[0].arguments
+  assert.equal(url.origin+url.pathname,'https://vimeo.com/api/oembed.json')
+  assert.equal(url.searchParams.get('url'),'https://vimeo.com/76979871/abc123')
+  assert.equal(options.credentials,'omit')
+  reply({ok:true,json:async()=>({thumbnail_url:'https://i.vimeocdn.com/video/123.jpg'})})
+  await new Promise(resolve=>setImmediate(resolve))
+  assert.equal(poster.src,'https://i.vimeocdn.com/video/123.jpg')
+  player.reset();const late=surface.children[0];show(surface)
+  surface.children.at(-1).dispatchEvent(new Event('click'))
+  assert.equal(fetchPreview.mock.calls[1].arguments[1].signal.aborted,true)
+  reply({ok:true,json:async()=>({thumbnail_url:'https://i.vimeocdn.com/video/456.jpg'})})
+  await new Promise(resolve=>setImmediate(resolve))
+  assert.equal(late.src,undefined);assert.equal(surface.children[0].tagName,'IFRAME')
+  player.destroy()
 })

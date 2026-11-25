@@ -4,7 +4,7 @@
   .fn-video-surface { position: relative; width: 100%; aspect-ratio: var(--fn-frame-ratio, var(--fn-video-ratio, 16 / 9)); overflow: hidden; border-radius: 6px; background: #15191c; color: white; }
   .fn-video-surface[data-ratio="portrait"] { aspect-ratio: var(--fn-frame-ratio, 9 / 16); }
   .fn-editor .fn-video-surface .fn-video-viewport { max-width: none; position: absolute; top: 0; left: 0; transform-origin: 0 0; }
-  .fn-editor .fn-video-surface img.fn-video-poster { position: absolute; inset: 0; display: block; width: 100%; height: 100%; max-width: none; max-height: none; object-fit: cover; border-radius: inherit; pointer-events: none; }
+  .fn-editor .fn-video-surface .fn-video-poster { position: absolute; inset: 0; display: block; width: 100%; height: 100%; max-width: none; max-height: none; object-fit: cover; border-radius: inherit; pointer-events: none; }
   .fn-video-surface :is(iframe,video) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: inherit; background: #000; object-fit: contain; }
   .fn-video[data-frame-ratio] video { object-fit: fill; }
   .fn-video-surface.is-playing { cursor: default; }

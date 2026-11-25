@@ -1,6 +1,65 @@
 import { videoSource, videoFrameURL } from '../format/video.mjs'
 
 const playIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7Z" fill="currentColor"/></svg>'
+// Load just the preview when the video comes into view, including when its
+// enclosing section is expanded. Never mount a provider player before Play.
+function mountPreview(surface, source) {
+  const file = source.provider === 'file'
+  const poster = document.createElement(file ? 'video' : 'img')
+  const request = source.provider === 'vimeo' ? new AbortController() : null
+  poster.className = 'fn-video-poster'
+  poster.draggable = false
+  poster.setAttribute('aria-hidden', 'true')
+  poster.addEventListener('error', () => poster.remove(), {once:true})
+  if (file) {
+    poster.muted = true
+    poster.playsInline = true
+    poster.preload = 'metadata'
+    poster.addEventListener('loadedmetadata', () => {
+      if (!new URL(source.url).hash && poster.duration > 0) poster.currentTime = Math.min(0.1, poster.duration / 2)
+    }, {once:true})
+  } else {
+    poster.alt = ''
+    poster.referrerPolicy = 'no-referrer'
+  }
+  surface.append(poster)
+
+  async function load() {
+    if (!request) {
+      poster.src = file ? source.url : source.poster
+      return
+    }
+    const endpoint = new URL('https://vimeo.com/api/oembed.json')
+    endpoint.searchParams.set('url', source.url.split('#')[0])
+    endpoint.searchParams.set('width', '640')
+    try {
+      const response = await fetch(endpoint, {signal:request.signal, credentials:'omit', referrerPolicy:'no-referrer', redirect:'error'})
+      if (!response.ok) return
+      const {thumbnail_url} = await response.json()
+      const image = new URL(thumbnail_url)
+      if (!request.signal.aborted && image.origin === 'https://i.vimeocdn.com' && !image.username && !image.password) poster.src = image.href
+    } catch { /* The Play button still works when a preview is unavailable. */ }
+  }
+
+  const visible = new IntersectionObserver(entries => {
+    if (entries.some(entry => entry.isIntersecting)) {
+      visible.disconnect()
+      load()
+    }
+  })
+  visible.observe(surface)
+  return () => {
+    visible.disconnect()
+    visible.takeRecords()
+    request?.abort()
+    poster.remove()
+    if (file && poster.hasAttribute('src')) {
+      poster.removeAttribute('src')
+      poster.load()
+    }
+  }
+}
+
 // Shared by the editor and public reader. Placement updates never replace the
 // live player, so moving or resizing a playing video does not restart it.
 export function mountVideo(container, input, { preview = true, onSelect, editable=false, onInteractionChange } = {}) {
@@ -9,7 +68,7 @@ export function mountVideo(container, input, { preview = true, onSelect, editabl
   const surface = document.createElement('div')
   surface.className='fn-video-surface';surface.dataset.ratio=source.ratio;surface.dataset.provider=source.provider
   container.append(surface)
-  let media, playerBox, observer, closed=false, focusTimer, interacting=false
+  let media, playerBox, observer, clearPreview, closed=false, focusTimer, interacting=false
   const shield=editable?document.createElement('div'):null
   if(shield){
     shield.className='fn-video-move-surface'
@@ -68,17 +127,15 @@ export function mountVideo(container, input, { preview = true, onSelect, editabl
     media?.pause?.();media?.remove();media=null
     interaction(false)
     surface.classList.remove('is-playing');surface.replaceChildren();playerBox=null
-    if(preview&&source.poster){
-      const poster=document.createElement('img')
-      poster.className='fn-video-poster';poster.alt='';poster.draggable=false;poster.loading='lazy';poster.referrerPolicy='no-referrer';poster.src=source.poster
-      poster.addEventListener('error',()=>poster.remove(),{once:true});appendMedia(poster)
-    }
+    clearPreview?.()
+    clearPreview = preview ? mountPreview(surface,source) : null
     const play=document.createElement('button')
     play.type='button';play.className='fn-video-play';play.title='Play video';play.setAttribute('aria-label','Play video');play.innerHTML=playIcon
     play.addEventListener('click',event=>{event.stopPropagation();start()});surface.append(play)
   }
   const start=()=>{
     if(closed||media)return
+    clearPreview?.();clearPreview=null
     media=document.createElement(source.provider==='file'?'video':'iframe')
     if(source.provider==='file'){
       media.addEventListener('loadedmetadata',event=>{
@@ -114,6 +171,6 @@ export function mountVideo(container, input, { preview = true, onSelect, editabl
     closed=true;clearTimeout(focusTimer)
     if(onSelect)window.removeEventListener('blur',frameFocus)
     if(editable){document.removeEventListener('pointerdown',outside,true);document.removeEventListener('keydown',key,true)}
-    observer?.disconnect();media?.pause?.();media?.remove();surface.remove()
+    clearPreview?.();observer?.disconnect();media?.pause?.();media?.remove();surface.remove()
   } }
 }
