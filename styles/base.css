@@ -1,0 +1,15 @@
+/* Every editor stylesheet nests its rules in :is(:root, #fn-scope). It matches
+   the whole page and weighs as much as one id, so the editor's rules rank like
+   an app's id-scoped rules (see README, "Scope"). This file resets the
+   editor's own elements, so they look the same in any app. */
+:is(:root, #fn-scope) {
+  :where(.fn-editor, .fn-formatbar, .fn-popover, .fn-selection, .fn-object-bar, .fn-draw-overlay, .fn-draw-tools, .fn-image-dialog, .fn-place-ghost) {
+    &, & * { box-sizing: border-box; }
+    &[hidden], & [hidden] { display: none !important; }
+    & :is(button, input, select, textarea) { font: inherit; color: inherit; }
+    & button { border: 0; background: transparent; text-align: left; }
+    & :is(button, select) { cursor: pointer; }
+    & button:disabled { cursor: default; opacity: .34; }
+    & svg { width: 18px; height: 18px; flex-shrink: 0; stroke-width: 1.7; }
+  }
+}

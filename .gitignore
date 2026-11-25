@@ -1,0 +1,6 @@
+node_modules/
+dist/
+site/
+src/.build/
+*.tgz
+.DS_Store

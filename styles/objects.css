@@ -1,0 +1,168 @@
+/* Objects: files, pictures, drawings and video, where they sit on the page,
+   their toolbar and resize grip, and the canvas that positions them freely. */
+:is(:root, #fn-scope) {
+  .fn-attachment { display: flex; align-items: center; gap: 11px; margin: 16px 0; padding: 13px; border: 1px solid var(--n-line); border-radius: 9px; background: var(--n-side); font-size: 13px; }
+  .fn-attachment small { display: block; color: var(--n-muted); font-size: 11px; }
+  .fn-editor .fn-attachment { position: relative; align-items: start; flex-wrap: wrap; max-width: 100%; }
+  .fn-attachment img { flex: 1 0 100%; width: 100%; max-height: 320px; border-radius: 8px; object-fit: contain; object-position: left top; }
+  .fn-attachment span { flex: 1; min-width: 0; }
+  .fn-attachment a { margin-inline-start: auto; white-space: nowrap; }
+  .fn-load-image { width: 100%; min-height: 90px; padding: 18px; border: 1px dashed var(--n-line); border-radius: 8px; background: var(--n-soft); color: var(--n-accent); font: inherit; overflow-wrap: anywhere; cursor: pointer; }
+  .fn-editor .fn-attachment.fn-image img[hidden] { display: none; }
+
+  /* Placement: an object on its own line starts below anything placed beside the
+     text. --offset is how far in from its side the object was dropped (a share of
+     the page width); --gap is how far down it sits from the first line of the
+     block it is anchored to. The wrap shape starts at the object, so text runs
+     full width above it, narrows beside it and widens again below. --fill is
+     room beside the object too narrow for text, which the object claims. */
+  .fn-table:not([data-layout]), .fn-editor .fn-attachment:not([data-layout]) { clear: both; }
+  .fn-table[data-layout], .fn-attachment[data-layout] { width: fit-content; max-width: 100%; }
+  .fn-table:is([data-layout="left"], [data-layout="right"]), .fn-editor .fn-attachment:is([data-layout="left"], [data-layout="right"]) { shape-outside: inset(max(0px, var(--gap, 0px)) 0 8px 0); }
+  .fn-table[data-layout="left"] { float: left; margin: calc(6px + var(--gap, 0px)) calc(28px + var(--fill, 0px)) 24px var(--offset, 0%); }
+  .fn-table[data-layout="right"] { float: right; margin: calc(6px + var(--gap, 0px)) max(20px, var(--offset, 0%)) 24px calc(28px + var(--fill, 0px)); }
+  :is(.fn-table, .fn-attachment)[data-layout="left"][data-clear] { clear: left; }
+  :is(.fn-table, .fn-attachment)[data-layout="right"][data-clear] { clear: right; }
+  .fn-table[data-layout="free"] { clear: both; margin: calc(6px + var(--gap, 0px)) 0 24px var(--offset, 0%); }
+  .fn-attachment[data-layout="left"] { float: left; margin: calc(6px + var(--gap, 0px)) calc(22px + var(--fill, 0px)) 12px var(--offset, 0%); }
+  .fn-attachment[data-layout="right"] { float: right; margin: calc(6px + var(--gap, 0px)) var(--offset, 0%) 12px calc(22px + var(--fill, 0px)); }
+  .fn-editor .fn-attachment[data-layout="free"] { clear: both; margin: calc(6px + var(--gap, 0px)) 0 12px var(--offset, 0%); }
+  /* While dragged, an object is lifted and follows the pointer; the dashed
+     outline marks where it will rest. */
+  .is-moving { z-index: 20; opacity: .82; filter: drop-shadow(0 12px 22px light-dark(#0f172a40, #000000a0)); transition: none; }
+  .fn-place-ghost { position: fixed; z-index: 19; border: 1.5px dashed var(--n-accent); border-radius: 8px; background: color-mix(in srgb, var(--n-accent) 7%, transparent); pointer-events: none; }
+
+  /* A picture is just the picture: no card, no file name, no link. It is its own
+     move handle, and its controls appear only on hover or selection. */
+  .fn-editor .fn-attachment.fn-image:not([data-layout]) { margin: 10px 0; }
+  .fn-editor .fn-attachment.fn-image { display: block; width: fit-content; max-width: 100%; padding: 0; border: 0; border-radius: 6px; background: none; line-height: 0; cursor: grab; }
+  .fn-editor .fn-attachment.fn-image img { display: block; flex: none; width: auto; height: auto; max-width: 100%; max-height: 560px; border-radius: 6px; object-fit: initial; user-select: none; -webkit-user-drag: none; }
+  .fn-editor .fn-attachment.fn-image[style*="width"] img { width: 100%; max-height: none; }
+  .fn-attachment.fn-image.is-moving { cursor: grabbing; }
+  /* A picture still on its way keeps a quiet placeholder of its own shape. */
+  .fn-editor .fn-attachment.fn-image.is-loading img { min-width: 120px; min-height: 72px; color: transparent; background: color-mix(in srgb, var(--n-ink, currentColor) 7%, transparent); }
+  .fn-editor .fn-attachment.fn-image.is-loading img[width] { min-height: 0; }
+
+  /* A small toolbar on hover or selection, and a corner grip to resize. */
+  .fn-attachment.ProseMirror-selectednode { outline: 2px solid var(--n-accent); outline-offset: 2px; border-radius: 8px; }
+  .fn-object-bar { position: absolute; z-index: 3; bottom: calc(100% + 4px); left: 0; display: none; gap: 1px; padding: 2px; border: 1px solid var(--n-line); border-radius: 8px; background: var(--n-bg); box-shadow: var(--n-lift); }
+  .fn-attachment:hover .fn-object-bar, .fn-attachment.ProseMirror-selectednode .fn-object-bar, .fn-attachment.is-resizing .fn-object-bar { display: flex; }
+  .fn-object-bar :is(button, a) { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 6px; color: var(--n-muted); }
+  .fn-object-bar a { margin: 0; }
+  .fn-object-bar button { padding: 0; }
+  .fn-object-bar :is(button, a) svg { width: 14px; height: 14px; }
+  .fn-object-bar :is(button, a):hover { background: var(--n-hover); color: var(--n-ink); }
+  .fn-object-bar button[aria-pressed="true"] { background: var(--n-soft); color: var(--n-accent); }
+  .fn-object-bar [data-object="move"] { cursor: grab; touch-action: none; }
+  .fn-editor [contenteditable="true"] .fn-image { touch-action: none; }
+  .fn-object-resize { position: absolute; z-index: 3; right: -7px; bottom: -7px; display: none; place-items: center; width: 18px; height: 18px; padding: 0; border: 1px solid var(--n-line); border-radius: 50%; background: var(--n-bg); color: var(--n-muted); box-shadow: var(--n-lift); cursor: nwse-resize; touch-action: none; }
+  .fn-object-resize svg { width: 10px; height: 10px; }
+  .fn-attachment[data-layout="right"] .fn-object-resize { right: auto; left: -7px; cursor: nesw-resize; }
+  .fn-attachment[data-layout="right"] .fn-object-resize svg { transform: scaleX(-1); }
+  .fn-attachment:hover .fn-object-resize, .fn-attachment.ProseMirror-selectednode .fn-object-resize, .fn-attachment.is-resizing .fn-object-resize { display: grid; }
+  .fn-attachment.is-resizing { outline: 2px solid var(--n-accent); outline-offset: 2px; border-radius: 8px; }
+  /* Narrow pages have no room beside an object, so everything stacks. */
+  @container page (max-width: 560px) {
+    .fn-table[data-layout], .fn-editor .fn-attachment[data-layout] { float: none; max-width: 100%; margin: 14px 0 26px; }
+    .fn-attachment[data-layout="right"] .fn-object-resize { right: -7px; left: auto; cursor: nwse-resize; }
+    .fn-attachment[data-layout="right"] .fn-object-resize svg { transform: none; }
+  }
+  @media (pointer: coarse) {
+    .fn-object-bar :is(button, a) { width: 36px; height: 36px; }
+    .fn-object-bar button svg { width: 17px; height: 17px; }
+    .fn-object-resize { right: -10px; bottom: -10px; width: 28px; height: 28px; }
+  }
+  @media print {
+    :is(.fn-object-bar, .fn-object-resize, .fn-place-ghost, .fn-attachment a) { display: none !important; }
+  }
+
+  /* Objects on the canvas keep their own geometry; text flows around them
+     through separate exclusion bands. */
+  .fn-alignment-guides { position: fixed; z-index: 90; overflow: hidden; color: light-dark(#a033bd, #dda1ee); pointer-events: none; user-select: none; }
+  .fn-alignment-guides[hidden] { display: none; }
+  .fn-alignment-guides line { stroke: currentColor; stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .fn-alignment-guides line[data-mode="center"] { stroke-dasharray: 4 3; }
+  .fn-editor .fn-wrap-band { display: block; margin: 0; padding: 0; border: 0; font-size: 0; line-height: 0; pointer-events: none; user-select: none; shape-outside: inset(0); }
+  .fn-editor .ProseMirror > .fn-canvas-object { position: absolute !important; float: none !important; clear: none !important; max-width: 100%; margin: 0 !important; shape-outside: none; }
+  .fn-editor .fn-canvas-object.is-moving { opacity: 1; filter: none; will-change: transform; cursor: grabbing; }
+  .fn-editor .fn-canvas-object .fn-object-resize { right: -7px; left: auto; cursor: nwse-resize; }
+  .fn-editor .fn-canvas-object .fn-object-resize svg { transform: none; }
+  .fn-editor .fn-canvas-object .fn-table-resize { left: 100%; cursor: nwse-resize; }
+  .fn-editor .fn-canvas-object .fn-table-resize svg { transform: none; }
+  @container page (max-width: 560px) {
+    .fn-editor .fn-wrap-band { display: none; }
+    .fn-editor .ProseMirror > .fn-canvas-object:not(.fn-drawing) { position: relative !important; top: auto !important; left: auto !important; z-index: auto !important; margin: 14px 0 26px !important; }
+  }
+  /* The same stacking when the text area itself is 560px or narrower, which a
+     wider page container with padding would miss (set by canvas-layout.js). */
+  .fn-editor .ProseMirror.fn-canvas-stacked > .fn-canvas-object:not(.fn-drawing) { position: relative !important; top: auto !important; left: auto !important; z-index: auto !important; float: none; margin: 14px 0 26px !important; }
+}
+
+:is(:root, #fn-scope) {
+  .fn-resize-edge {
+    position: absolute; z-index: 4; display: none; place-items: center; padding: 0;
+    border: 0; background: transparent; pointer-events: auto; touch-action: none;
+  }
+  .fn-resize-edge::after {
+    content: ''; box-sizing: border-box; width: 6px; height: 16px; border-radius: 4px;
+    border: 1px solid var(--n-accent); background: var(--n-bg);
+  }
+  .fn-resize-edge[data-resize-axis="width"] { right: 0; top: 50%; width: 20px; height: 26px; transform: translate(50%, -50%); cursor: ew-resize; }
+  .fn-resize-edge[data-resize-axis="height"] { bottom: 0; left: 50%; width: 26px; height: 20px; transform: translate(-50%, 50%); cursor: ns-resize; }
+  .fn-resize-edge[data-resize-axis="height"]::after { width: 16px; height: 6px; }
+  .fn-resize-edge:is(:hover,:focus-visible)::after { background: var(--n-accent); }
+  :is(.fn-attachment,.fn-code-block):is(:hover,:focus-within,.ProseMirror-selectednode,.is-resizing) > .fn-resize-edge,
+  .fn-table > .fn-resize-edge:not([hidden]) { display: grid; }
+  .fn-table > .fn-resize-edge[data-resize-axis="width"] { top: 75%; }
+  .fn-table > .fn-resize-edge[data-resize-axis="height"] { left: 75%; }
+  @container page (min-width: 561px) {
+    :is(.fn-attachment,.fn-table)[data-layout="right"]:not(.fn-canvas-object) > .fn-resize-edge[data-resize-axis="width"] { right: auto; left: 0; transform: translate(-50%, -50%); }
+  }
+  .fn-attachment:not(.fn-image), .fn-code-block { min-height: var(--fn-min-height, auto); }
+  .fn-table > .tableWrapper > table { height: var(--fn-min-height, auto); }
+  .fn-editor .fn-attachment.fn-image > img { aspect-ratio: var(--fn-frame-ratio, auto); object-fit: fill; object-position: center; }
+  .fn-attachment > :is(.fn-ink,.fn-formatted-image) { aspect-ratio: var(--fn-frame-ratio, auto); }
+  @media (pointer: coarse) {
+    .fn-resize-edge[data-resize-axis] { width: 28px; height: 28px; }
+  }
+  @media print { .fn-resize-edge { display: none !important; } }
+}
+
+:is(:root, #fn-scope) {
+  .fn-media-rotate {
+    position: absolute; z-index: 5; top: 4px; right: 4px;
+    display: none; place-items: center; width: 22px; height: 22px; padding: 0;
+    border: 1px solid var(--n-line); border-radius: 50%; background: var(--n-bg);
+    color: var(--n-muted); box-shadow: var(--n-lift); cursor: grab; touch-action: none; pointer-events: auto;
+  }
+  .fn-media-rotate:active { cursor: grabbing; }
+  .fn-media-rotate svg { width: 13px; height: 13px; }
+  .fn-image:is(:hover,:focus-within,.ProseMirror-selectednode,.is-resizing) > .fn-media-rotate { display: grid; }
+  .fn-editor .fn-attachment.fn-image[data-media-rotation] { aspect-ratio: var(--fn-outer-ratio); }
+  .fn-editor .fn-attachment.fn-image[data-media-rotation] > :is(img,.fn-formatted-image,.fn-ink,.fn-video-surface) {
+    position: absolute; top: 50%; left: 50%;
+    width: var(--fn-media-width); height: var(--fn-media-height); max-width: none; max-height: none;
+    transform: translate(-50%,-50%) rotate(var(--fn-rotation)); transform-origin: center;
+  }
+  .fn-editor .fn-image[data-media-rotation] > .fn-resize-edge[data-resize-axis],
+  .fn-editor .fn-image[data-media-rotation] > .fn-object-resize {
+    right: auto; bottom: auto; transform: translate(-50%,-50%) rotate(var(--fn-rotation));
+  }
+  .fn-editor .fn-image[data-media-rotation] > [data-resize-axis="width"] { cursor: var(--fn-width-cursor); left: var(--fn-width-x); top: var(--fn-width-y); }
+  .fn-editor .fn-image[data-media-rotation] > [data-resize-axis="height"] { cursor: var(--fn-height-cursor); left: var(--fn-height-x); top: var(--fn-height-y); }
+  .fn-editor .fn-image[data-media-rotation] > .fn-object-resize { cursor: var(--fn-corner-cursor); left: var(--fn-corner-x); top: var(--fn-corner-y); }
+  @media (pointer: coarse) { .fn-media-rotate { width: 28px; height: 28px; } }
+  @media print { .fn-media-rotate { display: none !important; } }
+}
+
+:is(:root, #fn-scope) {
+  .fn-editor .fn-attachment.fn-image[data-frame-ratio]:not([data-media-rotation]) { aspect-ratio: var(--fn-frame-ratio); }
+  .fn-editor .fn-attachment.fn-image[data-frame-ratio] > img[data-natural-ratio] {
+    position: absolute; left: 50%; top: 50%; height: auto; max-height: none;
+    aspect-ratio: var(--fn-natural-ratio); transform-origin: center;
+    transform: translate(-50%,-50%) scaleY(calc(var(--fn-natural-ratio) / var(--fn-frame-ratio)));
+  }
+  .fn-editor .fn-attachment.fn-image[data-media-rotation][data-frame-ratio] > img[data-natural-ratio] {
+    transform: translate(-50%,-50%) rotate(var(--fn-rotation)) scaleY(calc(var(--fn-natural-ratio) / var(--fn-frame-ratio)));
+  }
+}

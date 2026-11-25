@@ -1,0 +1,57 @@
+/* Code blocks: language picker, copy button and syntax colours. */
+:is(:root, #fn-scope) {
+  .fn-editor .fn-code-block {
+    display: flow-root; width: fit-content; max-width: 100%; margin: .8em 0;
+    border: 1px solid var(--n-line); border-radius: 10px;
+    background: light-dark(#f5f6f8, #20242b); color: var(--n-ink);
+  }
+  .fn-editor .fn-code-tools {
+    display: flex; align-items: center; gap: 12px; padding: 3px 7px 0;
+    user-select: none; color: var(--n-muted);
+    font: 11px/1.4 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .fn-code-language-control {
+    position: relative; display: inline-flex; align-items: center; gap: 5px;
+    min-width: 0; max-width: 220px; min-height: 24px; padding: 0 5px; margin-right: auto; border-radius: 5px;
+  }
+  .fn-code-language-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fn-code-chevron { flex: none; opacity: .65; }
+  .fn-code-tools .fn-code-language {
+    position: absolute; inset: 0; width: 100%; height: 100%; min-width: 0;
+    margin: 0; padding: 0; opacity: 0; cursor: pointer; font: inherit;
+  }
+  .fn-code-tools .fn-code-language:disabled { cursor: default; }
+  .fn-code-language-control.is-readonly .fn-code-chevron { display: none; }
+  .fn-code-tools .fn-code-copy {
+    display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+    flex: none; width: 24px; height: 24px; min-width: 0; min-height: 0; padding: 4px; border-radius: 5px;
+    color: var(--n-muted); white-space: nowrap;
+  }
+  .fn-code-copy span { display: inline-flex; }
+  .fn-code-copy svg { width: 14px; height: 14px; }
+  .fn-code-copy:hover, .fn-code-language-control:not(.is-readonly):hover { background: var(--n-soft); color: var(--n-accent); }
+  .fn-code-copy[data-state="copied"] { color: var(--n-accent); }
+  .fn-code-copy[data-state="error"] { color: light-dark(#b32332, #ff9a9e); }
+  .fn-code-language-control:focus-within, .fn-code-copy:focus-visible { outline: 2px solid var(--n-accent); outline-offset: 1px; }
+  .fn-code-status { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .fn-editor .fn-code-block > pre {
+    width: auto; margin: 0; padding: 6px 12px 12px; background: transparent; border-radius: 0;
+    font: .86em/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2;
+  }
+  .fn-editor .fn-code-block > pre > code { display: block; padding: 0; background: transparent; font: inherit; white-space: inherit; border-radius: 0; }
+  .fn-code-block .hljs-comment, .fn-code-block .hljs-quote { color: light-dark(#66717e, #9aa8b8); font-style: italic; }
+  .fn-code-block .hljs-keyword, .fn-code-block .hljs-selector-tag, .fn-code-block .hljs-literal { color: light-dark(#9538a8, #da9cf3); }
+  .fn-code-block .hljs-string, .fn-code-block .hljs-regexp, .fn-code-block .hljs-addition { color: light-dark(#247345, #a3d795); }
+  .fn-code-block .hljs-number, .fn-code-block .hljs-symbol, .fn-code-block .hljs-bullet { color: light-dark(#a34b12, #e7b57e); }
+  .fn-code-block .hljs-title, .fn-code-block .hljs-section, .fn-code-block .hljs-selector-class { color: light-dark(#1767a7, #89baff); }
+  .fn-code-block .hljs-attr, .fn-code-block .hljs-attribute, .fn-code-block .hljs-variable, .fn-code-block .hljs-template-variable { color: light-dark(#ac344d, #f291a5); }
+  .fn-code-block .hljs-built_in, .fn-code-block .hljs-type, .fn-code-block .hljs-meta { color: light-dark(#087b83, #7ad2d5); }
+  .fn-code-block .hljs-deletion { color: light-dark(#bd2831, #ff9a9e); }
+  .fn-code-block .hljs-emphasis { font-style: italic; }
+  .fn-code-block .hljs-strong { font-weight: 700; }
+  @media (max-width: 600px) {
+    .fn-code-tools .fn-code-copy { width: 32px; height: 32px; }
+    .fn-code-language-control { min-height: 32px; max-width: 200px; }
+  }
+}

@@ -1,0 +1,86 @@
+/* Menus (quick insert, context, table and toolbar menus), the selection
+   toolbar, the format bar and the text colour and size pickers. */
+:is(:root, #fn-scope) {
+  .fn-popover { position: absolute; z-index: 8; top: calc(100% + 7px); width: min(242px, calc(100% - 12px)); max-height: min(420px, 55vh); padding: 7px; overflow: auto; border: 1px solid var(--n-line); border-radius: 10px; background: var(--n-bg); box-shadow: var(--n-elevation); color: var(--n-ink); }
+  .fn-popover button { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 35px; padding: 8px 10px; border-radius: 8px; font-size: 13px; }
+  .fn-popover button svg { width: 16px; height: 16px; color: var(--n-muted); }
+  .fn-popover button:hover, .fn-popover button:focus-visible, :where(.fn-popover) .is-highlighted { background: var(--n-soft); }
+  .fn-popover button > span { flex: 1; text-align: start; }
+  .fn-popover kbd { font-family: var(--home-font); font-size: 11px; font-weight: 500; line-height: normal; color: var(--n-muted); letter-spacing: .02em; }
+  .fn-popover hr { margin: 6px 2px; border: 0; border-top: 1px solid var(--n-line); }
+  .fn-editor .fn-popover hr { height: 0; margin: 4px 2px; border: 0; border-top: 1px solid var(--n-line); background: none; }
+  .fn-menu-label { padding: 5px 10px 6px; color: var(--n-muted); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .fn-menu-empty { padding: 8px; color: var(--n-muted); font-size: 13px; }
+  .fn-slash { top: auto; z-index: 12; width: min(220px, calc(100vw - 32px)); }
+
+  .fn-context-menu { position: fixed; z-index: 40; top: 0; right: auto; bottom: auto; left: 0; width: 244px; max-width: calc(100vw - 16px); padding: 6px; overscroll-behavior: contain; touch-action: pan-y; }
+  .fn-context-menu .fn-menu-label { padding: 7px 10px 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fn-context-status { padding: 9px 10px; color: var(--n-muted); font-size: 13px; }
+  .fn-context-menu button { min-height: 37px; text-align: start; }
+  .fn-context-menu button:disabled { opacity: .4; cursor: default; }
+  .fn-context-menu button:disabled:hover { background: transparent; }
+  .fn-context-menu .fn-context-danger, .fn-context-menu .fn-context-danger svg { color: var(--n-danger); }
+  .fn-context-target:not(.tiptap) { border-radius: 8px; box-shadow: inset 0 0 0 1px var(--n-accent); }
+
+  /* Selection toolbar and format bar. */
+  .fn-selection { position: fixed; z-index: 11; display: flex; align-items: center; gap: 1px; padding: 3px; border: 1px solid var(--n-line); border-radius: 10px; background: var(--n-bg); box-shadow: var(--n-elevation); }
+  .fn-selection .fn-icon { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; min-height: 32px; padding: 6px; border-radius: 8px; }
+  .fn-selection .fn-icon:hover { background: var(--n-hover); }
+  /* The format bar is one row that never wraps or scrolls: editor-controls.js
+     folds the least-used tools into its menus as the bar narrows. */
+  .fn-formatbar { position: relative; z-index: 4; display: flex; flex-wrap: nowrap; align-items: center; gap: 0; min-width: 0; color: var(--n-muted); }
+  .fn-formatbar > * { flex: none; }
+  .fn-group { display: flex; align-items: center; }
+  .fn-group:not([hidden]) ~ .fn-group:not([hidden])::before { content: ''; width: 1px; height: 16px; margin-inline: 4px; background: var(--n-line); }
+  .fn-formatbar .fn-icon { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; min-height: 30px; padding: 6px; border-radius: 7px; color: var(--n-muted); }
+  .fn-formatbar .fn-icon svg { width: 16px; height: 16px; }
+  .fn-formatbar .fn-icon:hover { background: var(--n-hover); color: var(--n-ink); }
+  .fn-format { display: inline-flex; align-items: center; gap: 5px; min-width: 0; min-height: 30px; padding: 4px 6px; border-radius: 7px; color: var(--n-muted); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+  .fn-format > span:first-child { color: var(--n-ink); font-size: 14px; font-weight: 650; }
+  .fn-format > svg { width: 12px; height: 12px; }
+  .fn-format > svg:last-child { width: 13px; }
+  .fn-format:hover { background: var(--n-hover); }
+  .fn-size-name { min-width: 24px; text-align: center; font-variant-numeric: tabular-nums; }
+  .fn-history { display: flex; margin-inline-start: auto; padding-inline-start: 6px; }
+  :where(.fn-formatbar, .fn-selection, .fn-popover) [data-command][aria-pressed="true"] { background: var(--n-soft); color: var(--n-accent); }
+  .fn-formatbar button[aria-pressed="true"], .fn-formatbar [data-command][aria-pressed="true"] { background: var(--n-soft); color: var(--n-accent); }
+  :is(.fn-formatbar, .fn-selection) .fn-icon:is([data-action="text-color"], [data-action="background-color"]) { position: relative; }
+  :is(.fn-formatbar, .fn-selection) .fn-icon:is([data-action="text-color"], [data-action="background-color"])::after { content: ''; position: absolute; right: 25%; bottom: 2px; left: 25%; height: 3px; border-radius: 2px; background: var(--text-swatch, currentColor); box-shadow: 0 0 0 .5px var(--n-line); }
+
+  /* Text colour, background and size. */
+  .fn-appearance :is(.fn-color-grid, .fn-size-grid) { display: grid; gap: 3px; margin: 5px 0 7px; }
+  .fn-color-grid { grid-template-columns: repeat(8, 1fr); }
+  .fn-size-grid { grid-template-columns: repeat(4, 1fr); }
+  .fn-appearance :is(.fn-color-grid, .fn-size-grid) button { position: relative; display: grid; place-items: center; min-width: 0; min-height: 30px; padding: 2px; text-align: center; font-variant-numeric: tabular-nums; }
+  .fn-appearance [aria-pressed="true"] { background: var(--n-soft); box-shadow: inset 0 0 0 1.5px var(--n-accent); }
+  .fn-color-grid button > span { width: 23px; height: 23px; border-radius: 50%; box-shadow: inset 0 0 0 1px #0002; }
+  .fn-color-grid button > svg { position: absolute; width: 15px; color: white; filter: drop-shadow(0 1px 1px #000); }
+  .fn-appearance-custom { padding: 7px 0 0; border-top: 1px solid var(--n-line); }
+  .fn-appearance-custom label { display: block; margin-bottom: 6px; color: var(--n-muted); font-size: 12px; }
+  .fn-appearance-custom > div { display: flex; align-items: center; gap: 5px; }
+  .fn-appearance-custom input { width: 100%; min-width: 0; height: 30px; min-height: 30px; padding: 6px; border: 1px solid var(--n-line); border-radius: 6px; background: var(--n-bg); color: var(--n-ink); font: inherit; font-size: 13px; }
+  .fn-appearance-custom input[type="color"] { flex: 0 0 32px; width: 32px; padding: 3px; cursor: pointer; }
+  .fn-appearance-custom button { width: auto; height: 30px; min-height: 30px; padding: 6px 9px; background: var(--n-soft); }
+  .fn-appearance-custom button svg { width: 16px; height: 16px; }
+  .fn-appearance-custom .fn-size-unit { color: var(--n-muted); font-size: 11px; }
+  .fn-fill-scope { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; margin: 5px 0 9px; }
+  .fn-fill-scope button { justify-content: center; padding: 7px 2px; font-size: 11px; }
+
+  @media screen and (max-width: 719px) {
+    .fn-formatbar .fn-icon { min-width: 40px; min-height: 40px; }
+    .fn-formatbar .fn-icon svg { width: 18px; height: 18px; }
+    .fn-format { min-height: 40px; padding-inline: 8px; }
+    .fn-appearance-custom input { font-size: 16px; }
+  }
+  @media screen and (max-width: 380px) {
+    .fn-formatbar .fn-format { padding-inline: 5px; }
+  }
+  @media (pointer: coarse) {
+    .fn-context-menu button { min-height: 44px; }
+    .fn-appearance :is(.fn-color-grid, .fn-size-grid) button { min-height: 38px; }
+    .fn-color-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  @media print {
+    :is(.fn-formatbar, .fn-selection, .fn-context-menu) { display: none !important; }
+  }
+}

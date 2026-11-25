@@ -1,0 +1,26 @@
+@import './editor.css';
+
+.oh-editor {
+  --n-bg: #fff; --n-ink: #24232c; --n-muted: #63616e; --n-line: #dedce6;
+  --n-soft: #f0ebff; --n-accent: #6543b6; --n-on: white; --n-side: #f8f7fb;
+  --n-mark: #ffe998; --n-danger: #a52c3b; --n-hover: #f1eff5;
+  --n-lift: 0 2px 8px #20133220; --n-elevation: 0 10px 32px #20133224;
+  --home-font: system-ui, sans-serif; --n-text-font: var(--home-font); --n-text-size: 16px;
+  --n-heading-font: var(--home-font); --n-heading-weight: 680;
+  display: flex; flex-direction: column; position: relative; min-width: 0;
+  height: var(--oh-editor-height, min(78dvh, 900px)); min-height: 260px;
+  color-scheme: light; color: var(--n-ink); background: var(--n-bg); font-family: var(--home-font);
+}
+.oh-editor > .fn-formatbar { z-index: 15; padding: 7px 5px; border-bottom: 1px solid var(--n-line); background: var(--n-bg); }
+.oh-editor .fn-note-content { flex: 1; min-height: 0; overflow: auto; position: relative; overscroll-behavior: contain; }
+.oh-editor .oh-page { margin: 0 auto; max-width: 850px; padding: clamp(20px, 3.5vw, 50px); container: page / inline-size; }
+.oh-editor .fn-editor .tiptap { min-height: 48vh; outline: none; }
+.oh-editor dialog { width: min(430px, 85vw); background: var(--n-bg); color: var(--n-ink); border: 1px solid var(--n-line); border-radius: 14px; padding: 18px; box-shadow: var(--n-elevation); }
+.oh-editor dialog::backdrop { background: #16121d55; }
+.oh-editor dialog label { display: grid; gap: 7px; }
+.oh-editor dialog :is(input:not([type]),textarea) { padding: 9px; font: inherit; border-radius: 6px; border: 1px solid var(--n-line); }
+.oh-editor dialog footer { display: flex; justify-content: end; gap: 8px; margin-top: 12px; }
+.oh-editor dialog button { font: inherit; padding: 6px 10px; cursor: pointer; }
+.oh-error { color: var(--n-danger); }
+.oh-feedback:not(:empty) { position: absolute; bottom: 12px; left: 12px; border-radius: 8px; padding: 8px 14px; background: var(--n-ink); color: var(--n-bg); z-index: 12; }
+@media (max-width: 480px) { .oh-editor > .fn-formatbar { padding-inline: 0; } }
