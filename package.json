@@ -1,6 +1,6 @@
 {
   "name": "@ohdocs/editor",
-  "version": "1.10.1",
+  "version": "1.10.2",
   "description": "The shared document editor and document format used by OhDocs and SafeFN.",
   "type": "module",
   "engines": {
