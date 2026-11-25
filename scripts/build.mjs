@@ -32,7 +32,15 @@ await writeFile(join(dist,'THIRD-PARTY-NOTICES.txt'), notices.join('\n\n'))
 // The downloadable static site is built from exactly the same assets as the library.
 const site = resolve(root,'site')
 await mkdir(site, {recursive:true})
-await cp(resolve(root,'demo'),site,{recursive:true,filter:path => basename(path) !== 'serve.mjs'})
+await cp(resolve(root,'demo'),site,{recursive:true,filter:path => !['serve.mjs','topics','topics.js'].includes(basename(path))})
 await cp(dist,join(site,'editor'),{recursive:true})
 await cp(join(root,'LICENSE'), join(site,'LICENSE.txt'))
 
+
+// Bundle the sample attachments so offline exports include them. Seeding a note
+// never needs a network fetch for a photograph, diagram or code example.
+await build({
+  entryPoints:[join(root,'demo/topics.js')], outfile:join(site,'topics.js'), bundle:true,
+  minify:true, format:'esm', target:'es2022', loader:{'.svg':'text','.webp':'binary','.py':'text'},
+})
+await cp(join(root,'demo/topics/media/CREDITS.md'), join(site,'SAMPLE-MEDIA.md'))

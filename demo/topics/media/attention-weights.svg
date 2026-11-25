@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 650 265" width="650" height="265" role="img" aria-label="One query attends to three keys. The softmax weights for the, river and bank are 9.0%, 66.5% and 24.5%.">
+  <rect width="650" height="265" rx="14" fill="#f0f4f8"/>
+  <g font-family="system-ui,sans-serif" fill="#153a58">
+    <text x="26" y="38" font-size="23" font-weight="700">Which token contributes to “bank”?</text>
+    <text x="27" y="72" font-size="16">Query</text><text x="229" y="72" font-size="16">Key</text><text x="345" y="72" font-size="16">Share of the value mix</text>
+    <g fill="none" stroke="#5a82a0" stroke-linecap="round"><path d="M134 163C174 163 174 108 217 108" stroke-width="2"/><path d="M134 163H217" stroke-width="9"/><path d="M134 163C174 163 174 219 217 219" stroke-width="4"/></g>
+    <rect x="24" y="140" width="110" height="46" rx="10" fill="#234e68"/><text x="79" y="169" text-anchor="middle" font-size="20" fill="white">bank</text>
+    <g fill="#d4e2ed"><rect x="218" y="88" width="91" height="39" rx="7"/><rect x="218" y="143" width="91" height="39" rx="7"/><rect x="218" y="199" width="91" height="39" rx="7"/></g>
+    <g font-size="19" text-anchor="middle"><text x="263" y="114">the</text><text x="263" y="169">river</text><text x="263" y="225">bank</text></g>
+    <g fill="#dae5eb"><rect x="345" y="98" width="205" height="20" rx="4"/><rect x="345" y="153" width="205" height="20" rx="4"/><rect x="345" y="209" width="205" height="20" rx="4"/></g>
+    <g fill="#247887"><rect x="345" y="98" width="18.45" height="20" rx="4"/><rect x="345" y="153" width="136.33" height="20" rx="4"/><rect x="345" y="209" width="50.23" height="20" rx="4"/></g>
+    <g font-size="18" font-weight="600"><text x="563" y="114">9.0%</text><text x="563" y="169">66.5%</text><text x="563" y="225">24.5%</text></g>
+  </g>
+</svg>

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.0
+
+Add four editable, illustrated notebooks on cinnamon, graphene, water management and transformer attention. Their images and the Python example travel with exported notes.
+
 ## 1.9.4
 
 Show YouTube and Vimeo thumbnails and paused frames for direct video files as they come into view in OhDocs.

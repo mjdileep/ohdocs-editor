@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 355" width="680" height="355" role="img" aria-label="Two linked reservoirs store runoff at the surface. A qanat carries groundwater through a tunnel to an outlet downslope.">
+  <rect width="680" height="355" rx="14" fill="#f6f0de"/>
+  <g font-family="system-ui,sans-serif" fill="#253f35">
+    <text x="24" y="32" font-size="22" font-weight="700">Village tank cascade</text>
+    <path d="M20 77 87 107 159 133 235 133 252 84 279 110 324 121 379 141 462 158 491 115 517 144 654 158V169H20Z" fill="#c8b993"/>
+    <path d="M75 101H246L235 133H159Z M325 121H488L462 158 379 141Z" fill="#54a6a5"/>
+    <path d="m246 100 31 11 46 10M491 122l32 23 52 6" stroke="#268d91" stroke-width="4" fill="none"/>
+    <path d="m307 113 16 8-17 2m253 20 16 8-17 1" stroke="#268d91" stroke-width="3" fill="none"/>
+    <text x="90" y="84" font-size="17">Upper tank</text><text x="309" y="96" font-size="17">Spillway</text><text x="464" y="97" font-size="17">Lower tank</text>
+    <path d="M22 183H658" stroke="#c6c5aa"/>
+    <text x="24" y="214" font-size="22" font-weight="700">Qanat</text>
+    <path d="m20 246 140 5 149 16 133 20 136 27 74 6v19H20Z" fill="#c8b993"/>
+    <path d="m20 280 118 7 60 17-5 35H20Z" fill="#68abab"/>
+    <path d="m91 250 0 53m109-47v50m108-38v41m110-26v30" stroke="#755f44" stroke-width="5"/>
+    <path d="m91 302 108 3 109 4 112 5 152 2 72 3" stroke="#207f86" stroke-width="5" fill="none"/>
+    <path d="m522 309 14 6-15 5" fill="none" stroke="#15565c" stroke-width="3"/>
+    <text x="32" y="238" font-size="16">Uphill well</text><text x="206" y="244" font-size="16">Access shafts</text><text x="536" y="291" font-size="16">Outlet</text>
+    <text x="23" y="332" font-size="15" fill="#123f46">Groundwater</text><text x="271" y="334" font-size="15">Gently sloping tunnel</text>
+  </g>
+</svg>

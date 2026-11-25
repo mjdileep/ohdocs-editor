@@ -1,26 +1,9 @@
+import { text, mark, p, h, task, list, details, object, code, link, tableRow } from './document-nodes.js'
+
 // The guide is a normal editable document. Both example files travel with it in exports.
 export const guideId = 'ohdocs-editor-guide'
 const guideTitle = 'A field guide to OhDocs'
 const imageId = 'guide-planting-plan', fileId = 'guide-seed-count'
-
-const text = (value, ...marks) => ({type:'text', text:value, ...(marks.length ? {marks} : {})})
-const mark = (type, attrs) => attrs ? {type, attrs} : {type}
-const inline = parts => parts.map(part => typeof part === 'string' ? text(part) : part)
-const p = (...parts) => ({type:'paragraph', content:inline(parts)})
-const h = (level, label) => ({type:'heading', attrs:{level}, content:[text(label)]})
-const task = (checked, label) => ({type:'taskItem', attrs:{checked}, content:[p(label)]})
-const list = (type, ...lines) => ({type, content:lines.map(line => ({type:'listItem',content:[p(line)]}))})
-const details = (label, ...content) => ({type:'details', attrs:{open:false}, content:[
-  {type:'detailsSummary',content:[text(label)]}, {type:'detailsContent',content}
-]})
-const object = attrs => ({type:'previewAttachment', attrs:{documentFlow:true, ...attrs}})
-const code = (language, value) => ({type:'codeBlock', attrs:{language,documentFlow:true}, content:[text(value)]})
-const link = (label, href) => text(label, mark('link',{href}))
-const tableRow = (header, ...values) => ({type:'tableRow', content:values.map((value, column) => ({
-  type:header ? 'tableHeader' : 'tableCell',
-  attrs:{backgroundColor:header ? '#dcefe5' : column === 2 ? '#fff3cc' : null},
-  content:[p(value)]
-}))})
 
 const guide = {type:'doc', content:[
   p('Plan a little pollinator garden while you try the editor. Everything on this page is editable. Start by ticking the last box or changing the planting plan.'),

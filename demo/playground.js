@@ -1,6 +1,9 @@
 import { createEditor, icon, isNewerFormat } from './editor/index.js'
-import { openStorage, readSnapshot, writeSnapshot, removeDraft, exportFile, importFile, listDrafts, summary, ensureGuide } from './storage.js'
+import { openStorage, readSnapshot, writeSnapshot, removeDraft, exportFile, importFile, listDrafts, summary, ensureSample } from './storage.js'
 import { createGuide, guideId } from './sample.js'
+import { topics } from './topics.js'
+
+const samples = new Map([[guideId,createGuide], ...topics])
 
 const get = id => document.getElementById(id)
 const blank = () => ({title:'',doc:{type:'doc',content:[{type:'paragraph'}]},files:new Map()})
@@ -106,7 +109,7 @@ async function transition(work) {
 async function select(id) {
   if (id === current) { document.body.classList.remove('show-list'); requestAnimationFrame(growTitle); return }
   return transition(async () => {
-    const stored = await readSnapshot(db,id)
+    const stored = db ? await readSnapshot(db,id) : samples.get(id)()
     if (!stored.doc) throw new Error('This note was deleted in another tab.')
     mount(id,stored)
   })
@@ -120,13 +123,14 @@ get('guide').onclick = () => transition(async () => {
   if (current === guideId) return
   get('search').value = ''
   if (db) {
-    await ensureGuide(db,guideId,createGuide,true)
+    await ensureSample(db,guideId,createGuide,{requested:true})
     mount(guideId,await readSnapshot(db,guideId))
   } else mount(guideId,createGuide())
 })
 get('reset').onclick = () => transition(async () => {
-  if (!confirm('Replace this note and its files with a fresh copy of the editor guide?')) return
-  const next = createGuide()
+  const makeSample = samples.get(current) || createGuide
+  const next = makeSample()
+  if (!confirm('Replace this note and its files with a fresh copy of “' + next.title + '”?')) return
   if (db) { const written = await writeSnapshot(db,current,next,saved,true); next.rev = written.rev }
   mount(current,next)
 })
@@ -159,14 +163,23 @@ get('download').onclick = async () => {
 window.addEventListener('beforeunload',event => { if (dirty) { event.preventDefault(); event.returnValue = '' } })
 window.addEventListener('resize',() => { if (title) growTitle() })
 let initialId, initial
+const requested = location.hash.slice(1)
 try {
   db = await openStorage()
-  const requested = location.hash.slice(1)
-  await ensureGuide(db,guideId,createGuide)
+  await ensureSample(db,guideId,createGuide)
+  const existing = await listDrafts(db)
+  // Keep the guide first on a fresh install and personal writing ahead of new samples.
+  const oldest = existing.reduce((time,row) => Math.min(time,row.updated),Date.now())
+  await Promise.all([...topics].map(([id,create],i) => ensureSample(db,id,create,{updated:oldest-i-1})))
   const rows = await listDrafts(db)
   for (const row of rows) notes.set(row.id,row)
   initialId = notes.has(requested) ? requested : rows.sort((a,b) => b.updated-a.updated)[0]?.id
   if (initialId) initial = await readSnapshot(db,initialId)
-} catch { db = null }
-mount(initialId || (db ? crypto.randomUUID() : guideId),initial || (db ? blank() : createGuide()))
+} catch {
+  db = null
+  for (const [id,create] of samples) notes.set(id,summary(id,create()))
+  initialId = samples.has(requested) ? requested : guideId
+  initial = samples.get(initialId)()
+}
+mount(initialId || crypto.randomUUID(),initial || blank())
 get('new').disabled = !db; get('delete').disabled = !db

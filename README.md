@@ -7,7 +7,7 @@ A rich text editor built on Tiptap and ProseMirror. Write Markdown, draw shapes,
 Install the built package from [GitHub Releases](https://github.com/mjdileep/ohdocs-editor/releases).
 
 ```sh
-npm install https://github.com/mjdileep/ohdocs-editor/releases/download/v1.9.4/ohdocs-editor-1.9.4.tgz
+npm install https://github.com/mjdileep/ohdocs-editor/releases/download/v1.10.0/ohdocs-editor-1.10.0.tgz
 ```
 
 Add an empty `<div id="editor"></div>` to your page. In your browser entry module:
@@ -35,7 +35,7 @@ npm test
 npm run demo
 ```
 
-Open http://127.0.0.1:4173. The first note is an editable field guide with a planting diagram, seed-count CSV, table, drawing, video, code, Markdown, and math examples. Reopen it from **Note options → Open editor guide**. The playground supports multiple drafts and stores their documents and attachments in IndexedDB in this browser. Download exports a portable copy; Open file restores it. Browser storage can be cleared by the user or browser. Visible videos load a thumbnail or a paused frame from the media host. Playback starts on Play. To enable these previews in an embedded editor, pass `videoPreviews: true` to `createEditor`. If your site uses a Content Security Policy, Vimeo thumbnails require `connect-src https://vimeo.com/api/oembed.json` and `img-src https://i.vimeocdn.com`.
+Open http://127.0.0.1:4173. The first note is an editable field guide with a planting diagram, seed-count CSV, table, drawing, video, code, Markdown, and math examples. Reopen it from **Note options → Open editor guide**. The notes list also includes four editable multimedia examples on cinnamon, graphene, ancient water management and attention in language models. Each sample is added once per browser. The playground supports multiple drafts and stores their documents and attachments in IndexedDB in this browser. Download exports a portable copy; Open file restores it. Browser storage can be cleared by the user or browser. Visible videos load a thumbnail or a paused frame from the media host. Playback starts on Play. To enable these previews in an embedded editor, pass `videoPreviews: true` to `createEditor`. If your site uses a Content Security Policy, Vimeo thumbnails require `connect-src https://vimeo.com/api/oembed.json` and `img-src https://i.vimeocdn.com`.
 
 To self-host, extract the playground archive from Releases into a static HTTPS web root. Alternatively run `npm run build` and serve the contents of `site/`. The playground needs no accounts or application server.
 
@@ -122,4 +122,4 @@ Contact or follow me at [@doubledescent0 on X](https://x.com/doubledescent0).
 
 ## License
 
-Original editor code is MIT licensed. The compiled distribution includes dependency licenses in `dist/THIRD-PARTY-NOTICES.txt`.
+Original editor code is MIT licensed. The sample photographs retain their [individual licenses and credits](demo/topics/media/CREDITS.md). The compiled distribution includes dependency licenses in `dist/THIRD-PARTY-NOTICES.txt`.

@@ -1,3 +1,5 @@
+import { guideId } from './sample.js'
+
 const wrap = request => new Promise((resolve,reject) => {
   request.onsuccess = () => resolve(request.result)
   request.onerror = () => reject(request.error)
@@ -15,13 +17,14 @@ export async function openStorage() {
   db.onversionchange = () => db.close()
   return db
 }
-// Seed in one transaction across tabs. Deleting the guide is remembered until
-// the user explicitly opens it again. An edited copy is always kept.
-export function ensureGuide(db, id, makeSnapshot, requested = false) {
+// A per-sample marker remembers deletion. Save the marker, note and all
+// attachments in one transaction so concurrent tabs cannot seed partial copies.
+export function ensureSample(db, id, makeSnapshot, {requested = false, updated = Date.now()} = {}) {
+  const key = id === guideId ? 'guide-added' : 'sample-added:' + id
   return new Promise((resolve, reject) => {
     const tx = db.transaction(['metadata','document','files'],'readwrite')
     const meta = tx.objectStore('metadata'), docs = tx.objectStore('document')
-    const seeded = meta.get('guide-added')
+    const seeded = meta.get(key)
     seeded.onsuccess = () => {
       if (seeded.result === 2 && !requested) return
       const existing = docs.get(id)
@@ -29,9 +32,9 @@ export function ensureGuide(db, id, makeSnapshot, requested = false) {
         const row = existing.result
         if (!row && (!seeded.result || requested)) {
           const {title, doc, files} = makeSnapshot()
-          docs.add({id,title,doc,rev:1,updated:Date.now()},id)
+          docs.add({id,title,doc,rev:1,updated},id)
           for (const [key,file] of files) tx.objectStore('files').add(file,[id,key])
-        } else if (row && seeded.result === true) {
+        } else if (id === guideId && row && seeded.result === true) {
           // Only update the original contact sentence in the built-in guide.
           const paragraph = row.doc.content.find(node => {
             const [intro, profile, end] = node.content || []
@@ -45,7 +48,7 @@ export function ensureGuide(db, id, makeSnapshot, requested = false) {
             docs.put({...row, rev:row.rev+1},id)
           }
         }
-        meta.put(2,'guide-added')
+        meta.put(2,key)
       }
     }
     tx.oncomplete = () => resolve()
