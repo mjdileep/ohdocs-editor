@@ -58,3 +58,29 @@ test('placed objects offer only the stacking moves that change what is seen, wit
   assert.ok(!labels(2).some(label=>/^(Bring|Send)/.test(label)),'an object overlapping nothing has no stacking choices')
   assert.ok(menuFor(0).find(a=>a.label==='Bring forward').hint.endsWith(']'))
 })
+
+test('the link menu opens the clicked destination and targets its text for editing', () => {
+  const linked = new Schema({
+    nodes:{doc:{content:'paragraph+'}, paragraph:{content:'text*'}, text:{}},
+    marks:{link:{attrs:{href:{}}}},
+  })
+  const href = 'https://ohdocs.com/'
+  const doc = linked.nodes.doc.create(null, linked.nodes.paragraph.create(null, [
+    linked.text('Before '), linked.text('guide', [linked.marks.link.create({href})]), linked.text(' after'),
+  ]))
+  let state = EditorState.create({doc})
+  const opened = []
+  const link = {getAttribute:() => href, closest:() => null}
+  const target = {closest:selector => selector.startsWith('a[href]') ? link : null}
+  const editor = {
+    get state() { return state }, schema:linked, isEditable:true, isActive:() => false,
+    view:{posAtDOM:() => 8, dom:{ownerDocument:{defaultView:{open:(...args) => opened.push(args)}}}},
+    commands:{setTextSelection:({from,to}) => { state = state.apply(state.tr.setSelection(TextSelection.create(doc,from,to))) }},
+  }
+  const actions = editorContext(target, {source:'mouse'}, {getEditor:() => editor})
+  assert.equal(actions[0].label, 'Open link')
+  actions[0].run()
+  assert.deepEqual(opened, [[href, '_blank', 'noopener,noreferrer']])
+  assert.equal(doc.textBetween(state.selection.from,state.selection.to), 'guide')
+  assert.ok(actions.some(action => action.label === 'Add or edit link…'))
+})

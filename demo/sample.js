@@ -66,7 +66,7 @@ const guide = {type:'doc', content:[
     list('orderedList','Loosen the soil.','Plant the seedlings.','Water at the roots.'),
     p('Type / at the start of a paragraph to insert a block. When moving objects, use the alignment guides to line them up. On a narrow screen, the page stacks objects for reading.'),
     p('Copy, cut, paste or delete a selected object. Press Escape to return to text. Click a divider to select and remove it.'),
-    p('This is a web link to the ',link('OhDocs Editor quick start','https://github.com/mjdileep/ohdocs-editor#quick-start'),'. Use the chain icon to edit a link or add your own.')),
+    p('Click the ',link('OhDocs Editor quick start','https://github.com/mjdileep/ohdocs-editor#quick-start'),' to open it in a new tab. Use the chain icon to edit a link or add your own.')),
   h(2,'Take the notebook with you'),
   p('Use the pencil beside All notes to start a blank note. Search the list, switch to gallery view, sort by title, or expand the page for focused writing.'),
   p('Notes and attachments are saved in this browser. Choose Note options (…) → Download note to keep a copy. On another device, choose Import a note to open it. Clearing site data removes the local notebook.'),

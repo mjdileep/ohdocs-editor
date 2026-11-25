@@ -32,6 +32,7 @@
   .fn-editor :is(code, pre) { padding: 2px 5px; border-radius: 5px; background: color-mix(in srgb, var(--n-ink) 6%, var(--n-bg)); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .86em; white-space: pre-wrap; }
   .fn-editor pre { display: flow-root; width: fit-content; max-width: 100%; padding: 10px 12px; border-radius: 8px; }
   .fn-editor mark { padding: 0 3px; border-radius: 3px; background: var(--n-mark); color: var(--n-ink); }
+  .fn-editor a[href]:not([href=""]) { cursor: pointer; }
   .fn-editor a { color: var(--n-accent); text-decoration: underline 1px; text-underline-offset: 3px; }
   .fn-editor hr { display: flow-root; clear: none; height: 1px; margin: 1.2em 0; border: 0; background: var(--n-line); }
   .fn-editor .fn-note-ref { padding: 0 2px; color: var(--n-accent); font-weight: 600; text-decoration: underline; }

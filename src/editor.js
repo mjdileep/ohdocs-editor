@@ -477,6 +477,17 @@ export function commandState(editor, action) {
 
 export const runEditorCommand = (editor, action) => actions[action]?.(editor.chain().focus()).run()
 
+export function followEditorLink(dom, address) {
+  const href = markdownURL(address)
+  if (!href) return
+  if (href.startsWith('#')) {
+    // The host may use its URL fragment to identify the open note.
+    dom.querySelector('#' + CSS.escape(href.slice(1)))?.scrollIntoView({block:'center'})
+  } else {
+    dom.ownerDocument.defaultView.open(href, '_blank', 'noopener,noreferrer')
+  }
+}
+
 export function linkSelection(editor) {
   const { $from, from, to, empty } = editor.state.selection
   return empty && editor.isActive('link')
@@ -577,7 +588,7 @@ export function createNotebook({ body, root, content, editable = true, icon, onE
         link: {
           defaultProtocol: 'https',
           isAllowedUri: (url, ctx) => Boolean(markdownURL(url)) && ctx.defaultValidate(url),
-          openOnClick: false, enableClickSelection: true,
+          openOnClick: false, enableClickSelection: false,
         },
       }),
       DocumentFormat,
@@ -704,9 +715,16 @@ export function createNotebook({ body, root, content, editable = true, icon, onE
         return new Slice(clean(slice.content),slice.openStart,slice.openEnd)
       },
       handleDOMEvents:{
-        click:(_,event)=>{
-          if(event.target.closest('a:not([data-attachment-download])'))event.preventDefault()
-          return false
+        click:(view,event)=>{
+          const link = event.target.closest?.('a[href]:not([data-attachment-download])')
+          if (!link || event.defaultPrevented || event.button !== 0) return false
+          event.preventDefault()
+          const selection = view.dom.ownerDocument.getSelection()
+          const selectingText = selection && !selection.isCollapsed && selection.containsNode(link, true) && !link.closest('[data-footnote-ref]')
+          if (!event.shiftKey && (event.detail === 0 || !selectingText)) {
+            followEditorLink(view.dom, link.getAttribute('href'))
+          }
+          return true
         },
       },
     },

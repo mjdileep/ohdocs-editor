@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.3
+
+Open links in notes with a click or tap, or choose Open link from the context menu. Footnote links scroll within the current note.
+
 ## 1.9.2
 
 Use “Contact or follow me on X” for the personal profile link.

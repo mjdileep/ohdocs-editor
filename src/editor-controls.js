@@ -1,7 +1,9 @@
 import { startDrawing, stopDrawing, isDrawing } from './drawing.js';
 import { insertShortcut, insertShortcutLabel, isMacPlatform } from './editor-shortcuts.js';
 import { icon } from './icons.js';
-import { runEditorCommand, commandState, marks, styles, inserts } from './editor.js';
+import { markdownURL } from '../format/markdown.mjs';
+import { getMarkRange } from '@tiptap/core';
+import { followEditorLink, runEditorCommand, commandState, marks, styles, inserts } from './editor.js';
 import { copyEditorSelection, pasteEditorSelection } from './editor-clipboard.js';
 import { selectedTextFormatting } from './text-formatting.js';
 import { appearanceActions, tableAppearanceActions, createTextAppearance } from './text-appearance.js';
@@ -183,10 +185,15 @@ export function createEditorControls({ root, getEditor, onLink, onAttach, onNote
 export function editorContext(target, { x, y, source }, { getEditor, onLink, toast, schedule }) {
   const editor = getEditor(); if (!editor) return [];
   const object = objectFromTarget(target) || (source === 'keyboard' && editor.state.selection.node?.type.name === 'previewAttachment' ? editor.view.nodeDOM(editor.state.selection.from) : null);
+  const link = target.closest('a[href]:not([data-attachment-download])');
   if (object) {
     const at = editor.view.posAtDOM(object, 0);
     if (editor.state.doc.nodeAt(at)?.type.name !== 'previewAttachment') return [];
     editor.commands.setNodeSelection(at);
+  } else if (link && !link.closest('[data-footnote-ref]')) {
+    const pos = editor.view.posAtDOM(link, 0);
+    const range = getMarkRange(editor.state.doc.resolve(pos), editor.schema.marks.link);
+    if (range) editor.commands.setTextSelection(range);
   } else if (source === 'mouse') {
     const pos = editor.view.posAtCoords({ left:x, top:y })?.pos, { from, to, empty } = editor.state.selection;
     if (pos !== undefined && (empty || pos < from || pos > to)) editor.commands.setTextSelection(pos);
@@ -236,6 +243,8 @@ export function editorContext(target, { x, y, source }, { getEditor, onLink, toa
     add('[data-object="delete"]',object.classList.contains('fn-drawing')?'Delete drawing':object.classList.contains('fn-video')?'Delete video':object.classList.contains('fn-image')?'Delete image':'Delete attachment','trash-2',{danger:true,hint:mac?'⌫':'Delete'});
     return actions;
   }
+  const href = markdownURL(link?.getAttribute('href') || (source === 'keyboard' && editor.isActive('link') ? editor.getAttributes('link').href : null));
+  if (href) values.unshift(item('Open link','external-link',() => followEditorLink(editor.view.dom,href)), {separator:true});
   // A placed table or code block is a stackable object too, right-clicked from inside.
   const $from = editor.state.selection.$from, holderPos = $from.depth ? $from.before(1) : null;
   const holder = holderPos === null ? null : editor.state.doc.nodeAt(holderPos);
