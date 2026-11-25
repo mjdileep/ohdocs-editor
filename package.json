@@ -1,6 +1,6 @@
 {
   "name": "@ohdocs/editor",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "The shared document editor and document format used by OhDocs and SafeFN.",
   "type": "module",
   "engines": {
@@ -49,7 +49,7 @@
   "homepage": "https://ohdocs.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SafeFN/ohdocs-editor.git"
+    "url": "git+https://github.com/mjdileep/ohdocs-editor.git"
   },
   "files": [
     "dist",

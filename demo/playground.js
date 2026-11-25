@@ -1,9 +1,8 @@
 import { createEditor, icon, isNewerFormat } from './editor/index.js'
-import { openStorage, readSnapshot, writeSnapshot, removeDraft, exportFile, importFile, listDrafts, summary } from './storage.js'
-import { sample } from './sample.js'
+import { openStorage, readSnapshot, writeSnapshot, removeDraft, exportFile, importFile, listDrafts, summary, ensureGuide } from './storage.js'
+import { createGuide, guideId } from './sample.js'
 
 const get = id => document.getElementById(id)
-const example = () => ({title:'A weekend by the sea',doc:sample,files:new Map()})
 const blank = () => ({title:'',doc:{type:'doc',content:[{type:'paragraph'}]},files:new Map()})
 let db, mounted, original, title, meta, saveLabel, current, saved, pending, writing, dirty, busy
 let byTitle = false
@@ -117,9 +116,17 @@ get('search').oninput = list
 get('gallery').onclick = event => event.currentTarget.setAttribute('aria-pressed',String(get('drafts').classList.toggle('grid')))
 get('sort').onclick = event => { byTitle = !byTitle; event.currentTarget.setAttribute('aria-pressed',String(byTitle)); list() }
 get('new').onclick = () => transition(() => { get('search').value = ''; mount(crypto.randomUUID(),blank()); requestAnimationFrame(() => title.focus()) })
+get('guide').onclick = () => transition(async () => {
+  if (current === guideId) return
+  get('search').value = ''
+  if (db) {
+    await ensureGuide(db,guideId,createGuide,true)
+    mount(guideId,await readSnapshot(db,guideId))
+  } else mount(guideId,createGuide())
+})
 get('reset').onclick = () => transition(async () => {
-  if (!confirm('Replace this note and its files with the sample?')) return
-  const next = example()
+  if (!confirm('Replace this note and its files with a fresh copy of the editor guide?')) return
+  const next = createGuide()
   if (db) { const written = await writeSnapshot(db,current,next,saved,true); next.rev = written.rev }
   mount(current,next)
 })
@@ -151,14 +158,15 @@ get('download').onclick = async () => {
 }
 window.addEventListener('beforeunload',event => { if (dirty) { event.preventDefault(); event.returnValue = '' } })
 window.addEventListener('resize',() => { if (title) growTitle() })
-let initialId, initial = example()
+let initialId, initial
 try {
   db = await openStorage()
+  const requested = location.hash.slice(1)
+  await ensureGuide(db,guideId,createGuide)
   const rows = await listDrafts(db)
   for (const row of rows) notes.set(row.id,row)
-  const requested = location.hash.slice(1)
   initialId = notes.has(requested) ? requested : rows.sort((a,b) => b.updated-a.updated)[0]?.id
   if (initialId) initial = await readSnapshot(db,initialId)
 } catch { db = null }
-mount(initialId || crypto.randomUUID(),initial)
+mount(initialId || (db ? crypto.randomUUID() : guideId),initial || (db ? blank() : createGuide()))
 get('new').disabled = !db; get('delete').disabled = !db

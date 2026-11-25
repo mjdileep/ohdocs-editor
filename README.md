@@ -4,10 +4,10 @@ A rich text editor built on Tiptap and ProseMirror. Write Markdown, draw shapes,
 
 ## Quick start
 
-Install the built package from [GitHub Releases](https://github.com/SafeFN/ohdocs-editor/releases).
+Install the built package from [GitHub Releases](https://github.com/mjdileep/ohdocs-editor/releases).
 
 ```sh
-npm install https://github.com/SafeFN/ohdocs-editor/releases/download/v1.9.0/ohdocs-editor-1.9.0.tgz
+npm install https://github.com/mjdileep/ohdocs-editor/releases/download/v1.9.1/ohdocs-editor-1.9.1.tgz
 ```
 
 Add an empty `<div id="editor"></div>` to your page. In your browser entry module:
@@ -35,7 +35,7 @@ npm test
 npm run demo
 ```
 
-Open http://127.0.0.1:4173. The playground supports multiple drafts and stores their documents and attachments in IndexedDB in this browser. Download exports a portable copy; Open file restores it. Browser storage can be cleared by the user or browser. Linked media can contact its provider when loaded.
+Open http://127.0.0.1:4173. The first note is an editable field guide with a planting diagram, seed-count CSV, table, drawing, video, code, Markdown, and math examples. Reopen it from **Note options → Open editor guide**. The playground supports multiple drafts and stores their documents and attachments in IndexedDB in this browser. Download exports a portable copy; Open file restores it. Browser storage can be cleared by the user or browser. Linked media can contact its provider when loaded.
 
 To self-host, extract the playground archive from Releases into a static HTTPS web root. Alternatively run `npm run build` and serve the contents of `site/`. The playground needs no accounts or application server.
 
@@ -115,6 +115,10 @@ npm test
 ```
 
 This writes the editor's own icon set to `src/.build/icons.json`, then runs the tests in `src/` and `format/`.
+
+## Business inquiries
+
+For commercial integrations, partnerships, or custom editor work, contact [@doubledescent0 on X](https://x.com/doubledescent0).
 
 ## License
 

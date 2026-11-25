@@ -3,14 +3,40 @@ const wrap = request => new Promise((resolve,reject) => {
   request.onerror = () => reject(request.error)
 })
 export async function openStorage() {
-  const request = indexedDB.open('ohdocs-drafts', 1)
-  request.onupgradeneeded = () => {
-    request.result.createObjectStore('document')
-    request.result.createObjectStore('files')
+  const request = indexedDB.open('ohdocs-drafts', 2)
+  request.onupgradeneeded = event => {
+    if (event.oldVersion < 1) {
+      request.result.createObjectStore('document')
+      request.result.createObjectStore('files')
+    }
+    request.result.createObjectStore('metadata')
   }
   const db = await wrap(request)
   db.onversionchange = () => db.close()
   return db
+}
+// Seed in one transaction across tabs. Deleting the guide is remembered until
+// the user explicitly opens it again. An edited copy is always kept.
+export function ensureGuide(db, id, makeSnapshot, requested = false) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(['metadata','document','files'],'readwrite')
+    const meta = tx.objectStore('metadata'), docs = tx.objectStore('document')
+    const seeded = meta.get('guide-added')
+    seeded.onsuccess = () => {
+      if (seeded.result && !requested) return
+      const existing = docs.get(id)
+      existing.onsuccess = () => {
+        if (!existing.result) {
+          const {title, doc, files} = makeSnapshot()
+          docs.add({id,title,doc,rev:1,updated:Date.now()},id)
+          for (const [key,file] of files) tx.objectStore('files').add(file,[id,key])
+        }
+        meta.put(true,'guide-added')
+      }
+    }
+    tx.oncomplete = () => resolve()
+    tx.onabort = () => reject(tx.error || new Error('Could not save the editor guide.'))
+  })
 }
 const fileRange = id => IDBKeyRange.bound([id], [id, []])
 export async function listDrafts(db) {

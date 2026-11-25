@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.1
+
+Add a hands-on editor guide with editable examples and local attachments. Move the public repository and release links to mjdileep/ohdocs-editor.
+
 ## 1.9.0
 
 Standalone browser entry point, default theme, lazy spelling worker and local-first playground with portable document and attachment files.
