@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.1
+
+Refocus the water sample on Sri Lanka’s historic tank villages, with a new cascade diagram and an account of seasonal land sharing. Existing browsers refresh the original sample if it has never been edited.
+
 ## 1.10.0
 
 Add four editable, illustrated notebooks on cinnamon, graphene, water management and transformer attention. Their images and the Python example travel with exported notes.

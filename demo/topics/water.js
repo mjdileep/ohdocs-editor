@@ -4,24 +4,23 @@ import { p, h, link, text, mark } from '../document-nodes.js'
 import { image, video, caption, credit, file } from './figures.js'
 
 export function water() {
-  return {title:'Ancient water wisdom, from village tanks to qanats',files:new Map([
+  return {title:'How Sri Lanka’s tank villages shared the monsoon',files:new Map([
     file('reservoir','parakrama-samudra.webp','image/webp',photo),
-    file('section','two-paths-for-water.svg','image/svg+xml',section),
+    file('section','sri-lankan-tank-cascade.svg','image/svg+xml',section),
   ]),doc:{type:'doc',content:[
-    p('Stand at the edge of a full reservoir and the hard part looks finished. Now imagine deciding, before the monsoon ends, how much water to release to the next village and how much to keep for a dry month. The engineering lies as much in the connections as in the wall holding back the water.'),
+    p('When a village reservoir fills in Sri Lanka’s dry zone, the water that spills over can become the next village’s reserve. Farmers built small earth embankments at intervals down shallow valleys. Together the reservoirs could hold part of a monsoon’s rain long enough to grow rice in the dry months.'),
+    p('Known as ',text('ellanga gammana',mark('italic')),', these linked tank villages developed over nearly two thousand years. In 2017 the UN Food and Agriculture Organization (FAO) designated Sri Lanka’s dry-zone system a Globally Important Agricultural Heritage System. ',link('FAO’s heritage record','https://www.fao.org/giahs/around-the-world/detail/sri-lanka-dry-zone/en'),'.'),
+    h(2,'Where does the water go?'),
+    image('section','Two reservoirs at different elevations. Overflow from the upper tank feeds the lower tank, whose sluice releases water to rice fields.'),
+    caption('Read from left to right, downhill. A spillway carries surplus water when a tank fills. Farmers can open a separate outlet, the sluice, to irrigate fields below the embankment.'),
+    p('Palugaswewa, in Anuradhapura District, gives a sense of the scale. The 2017 heritage proposal counted 78 tanks in 12 cascades there. Forest and scrub covered the higher ground, with farms and settlements lower down. The boundary that mattered for water was the whole valley. ',link('Palugaswewa designation proposal','https://www.fao.org/giahs/around-the-world/detail/sri-lanka-dry-zone/en'),'.'),
+    h(2,'Who gets to plant after a weak monsoon?'),
+    p('Picture two rice farmers. One has a plot beside the tank. The other farms at the far end of the channel, beyond the reach of the remaining water. Under a practice called ',text('bethma',mark('italic')),', cultivators can agree to plant a smaller area near the tank that season. The farmer at the far end gets a share of the irrigable land. The arrangement lasts for the season and depends on the farmers reaching agreement. ',link('How bethma works','https://www.geo.fu-berlin.de/en/v/tanks-in-the-dryzone-of-sri-lanka/exploring-tank-systems/traditional-knowledge/bethma-system/index.html'),'.'),
+    h(2,'See the landscape'),
+    video('Wh-wemqL9aY','The Climate and Us · Sri Lanka’s tank cascade system'),
+    p('In the aerial footage, look for the curve of an embankment and the patchwork of rice fields immediately below it. Then look downhill for the next stretch of open water. ',link('Watch the film featured by FAO','https://www.fao.org/biodiversity/resources/video/detail/sri-lanka-s-tank-cascade-system--the-ancient-invention-critical-to-daily-life/en'),'.'),
     image('reservoir','Evening panorama of Parakrama Samudra reservoir at Polonnaruwa, Sri Lanka',660),
-    caption('Parakrama Samudra at Polonnaruwa. This large reservoir gives a sense of the scale of Sri Lanka’s irrigation heritage. The village cascade below works across a much smaller catchment.'),
+    caption('Parakrama Samudra at Polonnaruwa shows a different scale of Sri Lankan irrigation. This is one large reservoir. The diagram above shows how a village cascade links several small ones.'),
     credit('Vethish','https://commons.wikimedia.org/wiki/File:Parakrama_samudra.jpg','CC BY-SA 3.0','https://creativecommons.org/licenses/by-sa/3.0/'),
-    h(2,'Follow a raindrop through Sri Lanka’s dry zone'),
-    p('Rain runs off the higher ground into a small reservoir, often called a tank or wewa. The embankment holds water back. A sluice lets people release water to the fields. A spillway gives excess water a route onward when the tank fills. A series of tanks at successively lower elevations can use the same valley through the wet and dry seasons.'),
-    p('How land is used upstream matters downstream. A wooded catchment and vegetation around a tank can slow runoff and intercept sediment. If too much soil enters the basin it takes up space once available for water. FAO describes these linked village systems as having evolved over nearly two millennia. ',link('FAO’s Sri Lankan tank-village profile','https://www.fao.org/giahs/around-the-world/detail/sri-lanka-dry-zone/en'),'.'),
-    image('section','Cross-sections comparing two surface tanks linked by a spillway with an underground qanat tunnel'),
-    h(2,'Follow groundwater through an Iranian qanat'),
-    p('On a dry alluvial slope, a well reaches the water table uphill. A gently descending tunnel carries groundwater to an outlet lower down. The line of vertical shafts visible at the surface gives workers access to dig, clear debris and repair the tunnel. Gravity supplies the flow, and the underground journey limits evaporation.'),
-    p('One system stores a pulse of rain at the surface. The other conveys groundwater to daylight. Both need people to maintain the route and agree who gets water when supplies fall. UNESCO records arrangements for sharing water among the communities served by the Persian qanats. ',link('UNESCO’s Persian Qanat record','https://whc.unesco.org/en/list/1506/'),'.'),
-    h(2,'A field question'),
-    p(text('If an upstream tank silts up, who notices first? ',mark('bold')),'Walk the diagram downstream. A smaller basin fills and spills sooner in a storm, then stores less for a dry spell. How those changes affect a particular farm depends on where its intake is and how the releases are managed.'),
-    video('Wh-wemqL9aY','The Climate and Us · The Ancient Invention Critical to Daily Life'),
-    p('Watch how the landscape looks from above in ',link('the film featured by FAO','https://www.fao.org/biodiversity/resources/video/detail/sri-lanka-s-tank-cascade-system--the-ancient-invention-critical-to-daily-life/en'),'. Look for the narrow land between an expanse of water and the fields it serves.'),
   ]}}
 }

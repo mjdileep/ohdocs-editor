@@ -170,7 +170,9 @@ try {
   const existing = await listDrafts(db)
   // Keep the guide first on a fresh install and personal writing ahead of new samples.
   const oldest = existing.reduce((time,row) => Math.min(time,row.updated),Date.now())
-  await Promise.all([...topics].map(([id,create],i) => ensureSample(db,id,create,{updated:oldest-i-1})))
+  await Promise.all([...topics].map(([id,create],i) => ensureSample(db,id,create,{
+    updated:oldest-i-1, edition:id === 'ancient-water' ? 3 : 2,
+  })))
   const rows = await listDrafts(db)
   for (const row of rows) notes.set(row.id,row)
   initialId = notes.has(requested) ? requested : rows.sort((a,b) => b.updated-a.updated)[0]?.id

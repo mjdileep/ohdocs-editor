@@ -19,21 +19,26 @@ export async function openStorage() {
 }
 // A per-sample marker remembers deletion. Save the marker, note and all
 // attachments in one transaction so concurrent tabs cannot seed partial copies.
-export function ensureSample(db, id, makeSnapshot, {requested = false, updated = Date.now()} = {}) {
+export function ensureSample(db, id, makeSnapshot, {requested = false, updated = Date.now(), edition = 2} = {}) {
   const key = id === guideId ? 'guide-added' : 'sample-added:' + id
   return new Promise((resolve, reject) => {
     const tx = db.transaction(['metadata','document','files'],'readwrite')
     const meta = tx.objectStore('metadata'), docs = tx.objectStore('document')
     const seeded = meta.get(key)
     seeded.onsuccess = () => {
-      if (seeded.result === 2 && !requested) return
+      if (seeded.result >= edition && !requested) return
       const existing = docs.get(id)
       existing.onsuccess = () => {
         const row = existing.result
-        if (!row && (!seeded.result || requested)) {
+        // Older untouched samples have revision 1. A normal save advances the revision.
+        const refresh = row && row.rev === (row.sampleRevision ?? 1) && seeded.result >= 2 && seeded.result < edition
+        if (refresh || (!row && (!seeded.result || requested))) {
           const {title, doc, files} = makeSnapshot()
-          docs.add({id,title,doc,rev:1,updated},id)
-          for (const [key,file] of files) tx.objectStore('files').add(file,[id,key])
+          const attachments = tx.objectStore('files')
+          if (refresh) attachments.delete(fileRange(id))
+          const rev = (row?.rev ?? 0) + 1
+          docs.put({id,title,doc,rev,sampleRevision:rev,updated:row?.updated ?? updated},id)
+          for (const [key,file] of files) attachments.put(file,[id,key])
         } else if (id === guideId && row && seeded.result === true) {
           // Only update the original contact sentence in the built-in guide.
           const paragraph = row.doc.content.find(node => {
@@ -48,7 +53,7 @@ export function ensureSample(db, id, makeSnapshot, {requested = false, updated =
             docs.put({...row, rev:row.rev+1},id)
           }
         }
-        meta.put(2,key)
+        meta.put(Math.max(edition,seeded.result || 0),key)
       }
     }
     tx.oncomplete = () => resolve()
