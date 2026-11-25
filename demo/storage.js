@@ -23,15 +23,29 @@ export function ensureGuide(db, id, makeSnapshot, requested = false) {
     const meta = tx.objectStore('metadata'), docs = tx.objectStore('document')
     const seeded = meta.get('guide-added')
     seeded.onsuccess = () => {
-      if (seeded.result && !requested) return
+      if (seeded.result === 2 && !requested) return
       const existing = docs.get(id)
       existing.onsuccess = () => {
-        if (!existing.result) {
+        const row = existing.result
+        if (!row && (!seeded.result || requested)) {
           const {title, doc, files} = makeSnapshot()
           docs.add({id,title,doc,rev:1,updated:Date.now()},id)
           for (const [key,file] of files) tx.objectStore('files').add(file,[id,key])
+        } else if (row && seeded.result === true) {
+          // Only update the original contact sentence in the built-in guide.
+          const paragraph = row.doc.content.find(node => {
+            const [intro, profile, end] = node.content || []
+            return node.type === 'paragraph' && node.content?.length === 3 &&
+              intro?.text === 'For business inquiries about the editor, contact ' &&
+              profile?.text === '@doubledescent0 on X' && end?.text === '.' &&
+              profile.marks?.some(mark => mark.type === 'link' && mark.attrs?.href === 'https://x.com/doubledescent0')
+          })
+          if (paragraph) {
+            paragraph.content[0].text = 'Contact or follow me at '
+            docs.put({...row, rev:row.rev+1},id)
+          }
         }
-        meta.put(true,'guide-added')
+        meta.put(2,'guide-added')
       }
     }
     tx.oncomplete = () => resolve()

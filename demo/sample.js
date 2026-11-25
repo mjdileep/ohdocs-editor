@@ -70,7 +70,7 @@ const guide = {type:'doc', content:[
   h(2,'Take the notebook with you'),
   p('Use the pencil beside All notes to start a blank note. Search the list, switch to gallery view, sort by title, or expand the page for focused writing.'),
   p('Notes and attachments are saved in this browser. Choose Note options (…) → Download note to keep a copy. On another device, choose Import a note to open it. Clearing site data removes the local notebook.'),
-  p('For business inquiries about the editor, contact ',link('@doubledescent0 on X','https://x.com/doubledescent0'),'.'),
+  p('Contact or follow me at ',link('@doubledescent0 on X','https://x.com/doubledescent0'),'.'),
   {type:'footnoteDefinition',attrs:{label:'seed-count'},content:[p('Seed counts come from the three rows in the planting table.')]},
   p()
 ]}

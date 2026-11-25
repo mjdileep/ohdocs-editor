@@ -7,7 +7,7 @@ A rich text editor built on Tiptap and ProseMirror. Write Markdown, draw shapes,
 Install the built package from [GitHub Releases](https://github.com/mjdileep/ohdocs-editor/releases).
 
 ```sh
-npm install https://github.com/mjdileep/ohdocs-editor/releases/download/v1.9.1/ohdocs-editor-1.9.1.tgz
+npm install https://github.com/mjdileep/ohdocs-editor/releases/download/v1.9.2/ohdocs-editor-1.9.2.tgz
 ```
 
 Add an empty `<div id="editor"></div>` to your page. In your browser entry module:
@@ -116,9 +116,9 @@ npm test
 
 This writes the editor's own icon set to `src/.build/icons.json`, then runs the tests in `src/` and `format/`.
 
-## Business inquiries
+## Contact
 
-For commercial integrations, partnerships, or custom editor work, contact [@doubledescent0 on X](https://x.com/doubledescent0).
+Contact or follow me at [@doubledescent0 on X](https://x.com/doubledescent0).
 
 ## License
 

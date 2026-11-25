@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.2
+
+Use “Contact or follow me on X” for the personal profile link.
+
 ## 1.9.1
 
 Add a hands-on editor guide with editable examples and local attachments. Move the public repository and release links to mjdileep/ohdocs-editor.
