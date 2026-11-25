@@ -14,7 +14,12 @@ function glyphs(root) {
   for (const el of root.querySelectorAll('i[data-icon]')) el.innerHTML = icon(el.dataset.icon)
 }
 glyphs(document)
-function status(value, long = value) { saveLabel.textContent = value; saveLabel.title = long; saveLabel.setAttribute('aria-label',long) }
+function status(value, long = value) {
+  saveLabel.textContent = value
+  saveLabel.title = long
+  saveLabel.setAttribute('aria-label',long)
+  get('device-status').textContent = value === 'Saved' ? 'Saved on this device' : value
+}
 const shortDate = time => new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(time)
 function list() {
   const query = get('search').value.trim().toLocaleLowerCase()
@@ -36,6 +41,7 @@ function snapshot() {
   return mounted.editor.isEditable ? {...mounted.snapshot(),title:title.value} : original
 }
 function describe(row) {
+  get('download-copy').title = 'Download a copy of “' + row.title + '”'
   meta.textContent = 'Edited ' + new Date(row.updated).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) + ' · ' + row.words + (row.words === 1 ? ' word' : ' words')
 }
 async function flush() {
@@ -48,7 +54,7 @@ async function flush() {
     } catch (error) {
       pending = null
       status('Unsaved',error.message)
-      meta.textContent = error.message.includes('another tab') ? error.message : 'Couldn’t save in this browser. Download a copy from Note options.'
+      meta.textContent = error.message.includes('another tab') ? error.message : 'Couldn’t save in this browser. Download a copy to keep your edits.'
       break
     }
   }
@@ -74,6 +80,8 @@ function mount(id, content) {
   glyphs(chrome)
   bar.before(chrome); chrome.insertBefore(bar,chrome.querySelector('.save'))
   saveLabel = chrome.querySelector('.save')
+  chrome.querySelector('.mobile-download').onclick = downloadCopy
+  get('download-copy').disabled = false
   chrome.querySelector('.back').onclick = () => { document.body.classList.add('show-list'); get('search').focus() }
   chrome.querySelector('.focus').onclick = event => {
     const focused = document.body.classList.toggle('focus-mode')
@@ -151,7 +159,7 @@ get('source').onchange = async event => {
     await transition(() => { get('search').value = ''; mount(crypto.randomUUID(),imported) })
   } catch (error) { meta.textContent = 'Couldn’t open file. ' + error.message }
 }
-get('download').onclick = async () => {
+async function downloadCopy() {
   get('note-menu').hidePopover()
   try {
     const content = snapshot(), url = URL.createObjectURL(await exportFile(content))
@@ -160,6 +168,8 @@ get('download').onclick = async () => {
     a.click(); setTimeout(() => URL.revokeObjectURL(url),30000)
   } catch { meta.textContent = 'Download failed. Try again.' }
 }
+get('download').onclick = downloadCopy
+get('download-copy').onclick = downloadCopy
 window.addEventListener('beforeunload',event => { if (dirty) { event.preventDefault(); event.returnValue = '' } })
 window.addEventListener('resize',() => { if (title) growTitle() })
 let initialId, initial

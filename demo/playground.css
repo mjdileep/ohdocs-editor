@@ -25,6 +25,9 @@ i[data-icon] { display:inline-flex; align-items:center; } i svg { width:18px; he
 #drafts strong { font-size:14px; } #drafts small { color:#606b77; font-size:12px; }
 #drafts.grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; } #drafts.grid button { min-height:76px; }
 .notes footer { padding:11px 13px; border-top:1px solid #dfe3e7; justify-content:space-between; gap:6px; color:#626a73; font-size:11px; }
+.local-copy { display:grid; justify-items:end; }
+.notes #download-copy { gap:5px; padding:2px 4px; color:#087b58; font-size:12px; font-weight:600; }
+#download-copy svg { width:15px; height:15px; }
 .brand { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:650; color:#26232e; }
 #document { --oh-editor-height:100%; background:white; border:1px solid #d9dee5; box-shadow:0 1px 4px #15232e12; }
 #document .oh-editor { min-height:0; border-radius:inherit; --n-accent:#087b58; --n-soft:#dcf4ea; --n-hover:#f0f2f4; --n-ink:#171b1f; --n-muted:#606a76; --n-line:#dce0e5; }
@@ -39,11 +42,12 @@ i[data-icon] { display:inline-flex; align-items:center; } i svg { width:18px; he
 #note-menu { position:fixed; inset:48px 12px auto auto; margin:0; padding:5px; border:1px solid #dce0e5; border-radius:10px; background:white; color:#171b1f; min-width:185px; box-shadow:0 9px 27px #20303d24; }
 #note-menu button,#note-menu a { display:flex; align-items:center; gap:9px; width:100%; min-height:32px; padding:5px 10px; font:inherit; font-size:13px; border-radius:6px; color:inherit; text-decoration:none; }
 #note-menu :is(button,a):hover { background:#eff5f2; } #note-menu hr { border:0; border-top:1px solid #dce0e5; }
-#document .back { display:none; }
+#document .back,#document .mobile-download { display:none; }
 body.focus-mode .workspace { grid-template-columns:minmax(0,1fr); } body.focus-mode .notes { display:none; }
 @media(max-width:700px) {
   .workspace { display:block; padding:0; } .notes,#document { height:100%; border-radius:0; } .notes { display:none; }
   body.show-list .notes { display:flex; } body.show-list #document { display:none; }
+  #document .mobile-download { display:inline-flex; min-width:34px; min-height:36px; }
   #document .back { display:inline-flex; gap:2px; padding-inline:2px; color:#087b58; }
   #document .focus,#document .location { display:none; } .note-chrome { padding:3px 4px; gap:1px; }
   .note-chrome .save { max-width:6ch; font-size:11px; } #document .oh-page { padding:22px 18px; }

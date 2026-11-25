@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.4
+
+Download a copy of the open note beside the device save status, or from the toolbar on a phone.
+
 ## 1.10.3
 
 Keep the editor guide and cinnamon as the two built-in notes. Remove untouched retired samples and their attachments from existing notebooks.

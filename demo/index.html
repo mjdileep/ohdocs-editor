@@ -8,12 +8,12 @@
 <label class="search"><i data-icon="search"></i><input id="search" type="search" placeholder="Search all notes" aria-label="Search all notes"></label>
 <div class="list-heading"><span id="count"></span><div><button type="button" id="gallery" title="Gallery view" aria-label="Gallery view" aria-pressed="false"><i data-icon="layout-grid"></i></button><button type="button" id="sort" title="Sort by title" aria-label="Sort by title" aria-pressed="false"><i data-icon="arrow-down-wide-narrow"></i></button></div></div>
 <nav id="drafts" aria-label="Local notes"></nav>
-<footer><span class="brand"><img src="./icon.svg" width="23" height="23" alt="">OhDocs</span><span>Saved on this device</span></footer></aside>
+<footer><span class="brand"><img src="./icon.svg" width="23" height="23" alt="">OhDocs</span><span class="local-copy"><span id="device-status"></span><button type="button" id="download-copy" disabled><i data-icon="download" aria-hidden="true"></i>Download a copy</button></span></footer></aside>
 <article id="document" aria-label="Note editor"></article>
 </main>
 <template id="chrome">
 <button type="button" class="back" aria-label="Back to notes"><i data-icon="chevron-left"></i>Notes</button><span class="location">All notes</span>
-<span class="save" role="status"></span><button type="button" class="focus" title="Focus on this page" aria-label="Focus on this page"><i data-icon="maximize-2"></i></button>
+<span class="save" role="status"></span><button type="button" class="mobile-download" aria-label="Download a copy of this note" title="Download a copy of this note"><i data-icon="download" aria-hidden="true"></i></button><button type="button" class="focus" title="Focus on this page" aria-label="Focus on this page"><i data-icon="maximize-2"></i></button>
 <button type="button" class="more" popovertarget="note-menu" aria-label="Note options" title="Note options"><i data-icon="ellipsis"></i></button>
 </template>
 <div id="note-menu" popover><button id="download"><i data-icon="download"></i>Download note</button><button id="open"><i data-icon="folder-open"></i>Import a note</button><button id="reset"><i data-icon="rotate-ccw"></i>Restore sample</button><button id="delete"><i data-icon="trash-2"></i>Delete note</button><hr><button id="guide"><i data-icon="book-open"></i>Open editor guide</button><a href="https://github.com/mjdileep/ohdocs-editor#quick-start">Quick start</a><a href="https://github.com/mjdileep/ohdocs-editor">GitHub</a><a href="https://x.com/doubledescent0" target="_blank" rel="noopener noreferrer">Contact or follow me on X</a><a href="./editor/THIRD-PARTY-NOTICES.txt">Licenses</a></div>
