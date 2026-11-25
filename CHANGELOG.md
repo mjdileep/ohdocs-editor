@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.3
+
+Keep the editor guide and cinnamon as the two built-in notes. Remove untouched retired samples and their attachments from existing notebooks.
+
 ## 1.10.2
 
 Shorten the historical introduction in the attention sample.

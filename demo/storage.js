@@ -5,13 +5,27 @@ const wrap = request => new Promise((resolve,reject) => {
   request.onerror = () => reject(request.error)
 })
 export async function openStorage() {
-  const request = indexedDB.open('ohdocs-drafts', 2)
+  const request = indexedDB.open('ohdocs-drafts', 3)
   request.onupgradeneeded = event => {
     if (event.oldVersion < 1) {
       request.result.createObjectStore('document')
       request.result.createObjectStore('files')
     }
-    request.result.createObjectStore('metadata')
+    if (event.oldVersion < 2) request.result.createObjectStore('metadata')
+    if (event.oldVersion === 2) {
+      const docs = request.transaction.objectStore('document')
+      const files = request.transaction.objectStore('files')
+      for (const id of ['graphene', 'ancient-water', 'attention']) {
+        const read = docs.get(id)
+        read.onsuccess = () => {
+          const row = read.result
+          if (row && row.rev === (row.sampleRevision ?? 1)) {
+            docs.delete(id)
+            files.delete(fileRange(id))
+          }
+        }
+      }
+    }
   }
   const db = await wrap(request)
   db.onversionchange = () => db.close()
